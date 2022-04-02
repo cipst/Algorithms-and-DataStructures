@@ -49,17 +49,15 @@ void* generic_array_get(GenericArray* array_ptr, unsigned long index);
  * It does not destroy the structure.
  * Use with caution, as it could lead to segmentation faults if the array contains pointers to reserved memory locations.
  * @param array_ptr pointer to a generic array
- * @return 1 on success
  * @author Stefano Cipolletta
  * */
-int generic_array_clear(GenericArray* array_ptr);
+void generic_array_clear(GenericArray* array_ptr);
 
 /**
- * Frees the memory occpied by the structure of the generic array, leaving the task of freeing emory occpied by its elements to the calling program.
+ * Frees the memory occpied by the structure of the generic array, leaving the task of freeing emory occupied by its elements to the calling program.
  * @param array_ptr pointer to a generic array
- * @return 1 on success
  * @author Stefano Cipolletta
  * */
-int generic_array_destroy(GenericArray* array_ptr);
+void generic_array_destroy(GenericArray* array_ptr);
 
 #endif /*GENERIC_ARRAY_H_adsnoiqpfmoa*/

@@ -61,3 +61,29 @@ void* generic_array_get(GenericArray* array_ptr, unsigned long index) {
     }
     return (array_ptr->array)[index];
 }
+
+void generic_array_clear(GenericArray* array_ptr) {
+    if (array_ptr == NULL) {
+        fprintf(stderr, "generic_array_clear(): array_ptr parameter is NULL.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    for (unsigned long i = 0; i < array_ptr->elements_inserted; ++i) {
+        if (array_ptr->array[i] != NULL) {
+            free(array_ptr->array[i]);
+            array_ptr->array[i] = NULL;
+        }
+    }
+
+    array_ptr->elements_inserted = 0;
+}
+
+void generic_array_destroy(GenericArray* array_ptr) {
+    if (array_ptr == NULL) {
+        fprintf(stderr, "generic_array_destroy(): array_ptr parameter is NULL.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    free(array_ptr->array);
+    free(array_ptr);
+}
