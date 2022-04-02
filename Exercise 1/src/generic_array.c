@@ -22,13 +22,13 @@ struct _GenericArray {
 GenericArray* generic_array_create() {
     GenericArray* array_ptr = (GenericArray*)malloc(sizeof(GenericArray));
     if (array_ptr == NULL) {
-        fprintf(stderr, "generic_array_create(): Unable to allocate memory for the new array.");
+        fprintf(stderr, "generic_array_create(): Unable to allocate memory for the new array.\n");
         exit(EXIT_FAILURE);
     }
 
     array_ptr->array = malloc(INITIAL_ARRAY_SIZE * sizeof(void*));
     if (array_ptr->array == NULL) {
-        fprintf(stderr, "generic_array_create(): Unable to allocate memory for the new array.");
+        fprintf(stderr, "generic_array_create(): Unable to allocate memory for the new array.\n");
         exit(EXIT_FAILURE);
     }
 
@@ -44,8 +44,20 @@ GenericArray* generic_array_create() {
 
 unsigned long generic_array_size(GenericArray* array_ptr) {
     if (array_ptr == NULL) {
-        fprintf(stderr, "generic_array_size(): array_ptr parameter is NULL");
+        fprintf(stderr, "generic_array_size(): array_ptr parameter is NULL.\n");
         exit(EXIT_FAILURE);
     }
     return (array_ptr->num_el);
+}
+
+void* generic_array_get(GenericArray* array_ptr, unsigned long index) {
+    if (array_ptr == NULL) {
+        fprintf(stderr, "generic_array_get(): array_ptr parameter is NULL.\n");
+        exit(EXIT_FAILURE);
+    }
+    if (index >= array_ptr->num_el) {
+        fprintf(stderr, "generic_array_get(%lu): index out of bound.\n", index);
+        exit(EXIT_FAILURE);
+    }
+    return (array_ptr->array)[index];
 }
