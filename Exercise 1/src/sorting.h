@@ -22,4 +22,6 @@
  * */
 void quick_sort(GenericArray* unsorted_array, int (*compare)(void*, void*));
 
+void swap(GenericArray* unsorted_array, unsigned long index1, unsigned long index2);
+
 #endif /*SORTING_H_adsnoiqpfmoa*/
