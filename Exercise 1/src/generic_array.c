@@ -41,3 +41,11 @@ GenericArray* generic_array_create() {
 
     return (array_ptr);
 }
+
+unsigned long generic_array_size(GenericArray* array_ptr) {
+    if (array_ptr == NULL) {
+        fprintf(stderr, "generic_array_size(): array_ptr parameter is NULL");
+        exit(EXIT_FAILURE);
+    }
+    return (array_ptr->num_el);
+}
