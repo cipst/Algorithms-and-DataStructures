@@ -10,7 +10,7 @@
 #include <stdlib.h>
 
 /**
- * Core function for quick_sort().
+ * quick_sort() core function.
  * It helps to pass start and finish index of the unsorted_array to be sort
  * @param unsorted_array unsorted array
  * @param compare pointer to a function which determines the precedence relation between the array elements.
@@ -19,6 +19,7 @@
  * It returns 0 iff the first and the second elements are equal.
  * @param first index of the first element in the unsorted array
  * @param last index of the last element in the unsorted array
+ * @return 1 on success, -1 otherwise
  * @author Stefano Cipolletta
  * */
 static void quick_sort_core(GenericArray* unsorted_arrat, int (*compare)(void*, void*), unsigned long first, unsigned long last);
@@ -26,7 +27,6 @@ static void quick_sort_core(GenericArray* unsorted_arrat, int (*compare)(void*, 
 /**
  * Partition the unsorted_array.
  * Move all the elements less than the pivot on the left of the pivot and all the elements greater than the pivot on the right.
- * Then return the pivot index;
  * @param unsorted_array unsorted array
  * @param compare pointer to a function which determines the precedence relation between the array elements.
  * It returns 1 iff the first element is greater than the second.
@@ -34,6 +34,7 @@ static void quick_sort_core(GenericArray* unsorted_arrat, int (*compare)(void*, 
  * It returns 0 iff the first and the second elements are equal.
  * @param first index of the first element in the range to partition
  * @param last index of the last element in the range to partition
+ * @return the pivot index
  * @author Stefano Cipolletta
  * */
 static unsigned long partition(GenericArray* unsorted_array, int (*compare)(void*, void*), unsigned long first, unsigned long last);
@@ -83,20 +84,21 @@ static unsigned long partition(GenericArray* unsorted_array, int (*compare)(void
     return j;
 }
 
-void swap(GenericArray* unsorted_array, unsigned long index1, unsigned long index2) {
+int swap(GenericArray* unsorted_array, unsigned long index1, unsigned long index2) {
     if (unsorted_array == NULL) {
-        fprintf(stderr, "quick_sort(): unsorted_array parameter is NULL.\n");
-        exit(EXIT_FAILURE);
+        // fprintf(stderr, "quick_sort(): unsorted_array parameter is NULL.\n");
+        return -1;
     }
     if (index1 >= generic_array_size(unsorted_array)) {
-        fprintf(stderr, "swap(%lu): index out of bound.\n", index1);
-        exit(EXIT_FAILURE);
+        // fprintf(stderr, "swap(%lu): index out of bound.\n", index1);
+        return -1;
     }
     if (index2 >= generic_array_size(unsorted_array)) {
-        fprintf(stderr, "swap(%lu): index out of bound.\n", index2);
-        exit(EXIT_FAILURE);
+        // fprintf(stderr, "swap(%lu): index out of bound.\n", index2);
+        return -1;
     }
     void* aux = generic_array_get(unsorted_array, index1);
     generic_array_update_at(unsorted_array, generic_array_get(unsorted_array, index2), index1);
     generic_array_update_at(unsorted_array, aux, index2);
+    return 1;
 }
