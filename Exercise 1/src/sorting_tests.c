@@ -21,7 +21,7 @@ void tearDown(void) {
 }
 
 /* TEST FUNCTIONS */
-static void test_swap_two_el(void) {
+static void test_array_two_el_swap_two_el(void) {
     int* exp_arr[] = {&i3, &i1};
     int** act_arr = malloc(2 * sizeof(int*));
     generic_array_insert(generic_array_int, &i1);
@@ -32,10 +32,22 @@ static void test_swap_two_el(void) {
     TEST_ASSERT_EQUAL_PTR_ARRAY(act_arr, exp_arr, 2);
 }
 
+// static void test_array_one_el_swap_index_error(void) {
+//     int* exp_arr[] = {&i3, &i1};
+//     int** act_arr = malloc(2 * sizeof(int*));
+//     generic_array_insert(generic_array_int, &i1);
+//     generic_array_insert(generic_array_int, &i3);
+//     swap(generic_array_int, 0, 2);
+//     act_arr[0] = (int*)generic_array_get(generic_array_int, 0);
+//     act_arr[1] = (int*)generic_array_get(generic_array_int, 1);
+//     TEST_ASSERT_EQUAL_PTR_ARRAY(act_arr, exp_arr, 2);
+// }
+
 int main(void) {
     UNITY_BEGIN();
 
-    RUN_TEST(test_swap_two_el);
+    RUN_TEST(test_array_two_el_swap_two_el);
+    // RUN_TEST(test_array_one_el_swap_index_error);
 
     return UNITY_END();
 }

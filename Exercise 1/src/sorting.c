@@ -38,6 +38,25 @@ static void quick_sort_wrap(GenericArray* unsorted_arrat, int (*compare)(void*, 
  * */
 static unsigned long partition(GenericArray* unsorted_array, int (*compare)(void*, void*), unsigned long first, unsigned long last);
 
+static unsigned long partition(GenericArray* unsorted_array, int (*compare)(void*, void*), unsigned long first, unsigned long last) {
+    unsigned long i = first + 1;
+    unsigned long j = (last - first) + 1;
+
+    while (i <= j) {
+        if ((*compare)(generic_array_get(unsorted_array, i), generic_array_get(unsorted_array, first)) <= 0) {  // unsorted_array[i] <= unsorted_array[p]
+            ++i;
+        } else if ((*compare)(generic_array_get(unsorted_array, j), generic_array_get(unsorted_array, first)) > 0) {  // unsorted_array[j] > unsorted_array[p]
+            --j;
+        } else {
+            swap(unsorted_array, i, j);
+            ++i;
+            --j;
+        }
+    }
+    swap(unsorted_array, first, j);
+    return j;
+}
+
 void swap(GenericArray* unsorted_array, unsigned long index1, unsigned long index2) {
     if (unsorted_array == NULL) {
         fprintf(stderr, "quick_sort(): unsorted_array parameter is NULL.\n");
