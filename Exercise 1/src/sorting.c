@@ -38,6 +38,32 @@ static void quick_sort_wrap(GenericArray* unsorted_arrat, int (*compare)(void*, 
  * */
 static unsigned long partition(GenericArray* unsorted_array, int (*compare)(void*, void*), unsigned long first, unsigned long last);
 
+void quick_sort(GenericArray* unsorted_array, int (*compare)(void*, void*)) {
+    if (unsorted_array == NULL) {
+        fprintf(stderr, "quick_sort(): unsorted_array parameter is NULL.\n");
+        exit(EXIT_FAILURE);
+    }
+    if (compare == NULL) {
+        fprintf(stderr, "quick_sort(): compare function is NULL.\n");
+        exit(EXIT_FAILURE);
+    }
+    unsigned long n = generic_array_size(unsorted_array);
+    if (n > 1)
+        quick_sort_wrap(unsorted_array, compare, 0, n - 1);
+}
+
+static void quick_sort_wrap(GenericArray* unsorted_array, int (*compare)(void*, void*), unsigned long first, unsigned long last) {
+    if (generic_array_size(unsorted_array) > 1) {  // at least 2 elements in the unsorted array (with 1 element the array is ordered)
+        unsigned long p = partition(unsorted_array, compare, first, last);
+
+        if (p > first + 1)  // at least 2 elements before the pivot
+            quick_sort_wrap(unsorted_array, compare, first, p - 1);
+
+        if (p < last - 1)  // at least 2 elements after the pivot
+            quick_sort_wrap(unsorted_array, compare, p + 1, last);
+    }
+}
+
 static unsigned long partition(GenericArray* unsorted_array, int (*compare)(void*, void*), unsigned long first, unsigned long last) {
     unsigned long i = first + 1;
     unsigned long j = (last - first) + 1;
