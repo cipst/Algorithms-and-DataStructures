@@ -54,7 +54,8 @@ void quick_sort(GenericArray* unsorted_array, int (*compare)(void*, void*)) {
 }
 
 static void quick_sort_core(GenericArray* unsorted_array, int (*compare)(void*, void*), unsigned long first, unsigned long last) {
-    if (generic_array_size(unsorted_array) > 1) {  // at least 2 elements in the unsorted array (with 1 element the array is ordered)
+    if ((last - first) > 1) {  // at least 2 elements in the unsorted array (with 1 element the array is ordered)
+
         unsigned long p = partition(unsorted_array, compare, first, last);
 
         if (p > first + 1)  // at least 2 elements before the pivot
@@ -67,7 +68,7 @@ static void quick_sort_core(GenericArray* unsorted_array, int (*compare)(void*, 
 
 static unsigned long partition(GenericArray* unsorted_array, int (*compare)(void*, void*), unsigned long first, unsigned long last) {
     unsigned long i = first + 1;
-    unsigned long j = (last - first) + 1;
+    unsigned long j = (last - first);
 
     while (i <= j) {
         if ((*compare)(generic_array_get(unsorted_array, i), generic_array_get(unsorted_array, first)) <= 0) {  // unsorted_array[i] <= unsorted_array[p]
