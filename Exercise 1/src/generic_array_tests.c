@@ -54,6 +54,11 @@ static void test_generic_array_two_el_update_first(void) {
     TEST_ASSERT_EQUAL_PTR(&i3, generic_array_update_at(generic_array_int, &i3, 0));
 }
 
+// static void test_generic_array_one_el_update_index_error(void) {
+//     generic_array_insert(generic_array_int, &i1);
+//     TEST_ASSERT_EQUAL_PTR(&i3, generic_array_update_at(generic_array_int, &i3, 2));
+// }
+
 static void test_generic_array_two_el_update_both(void) {
     int* exp_arr[] = {&i3, &i1};
     int** act_arr = malloc(2 * sizeof(int*));
@@ -68,6 +73,11 @@ static void test_generic_array_insert_one_get_first_el(void) {
     generic_array_insert(generic_array_int, &i1);
     TEST_ASSERT_EQUAL_PTR(&i1, generic_array_get(generic_array_int, 0));
 }
+
+// static void test_generic_array_insert_one_get_index_error(void) {
+//     generic_array_insert(generic_array_int, &i1);
+//     TEST_ASSERT_EQUAL_PTR(&i1, generic_array_get(generic_array_int, 1));
+// }
 
 static void test_generic_array_insert_two_get_two_el(void) {
     int* exp_arr[] = {&i1, &i3};
@@ -110,9 +120,11 @@ int main(void) {
     RUN_TEST(test_generic_array_size_two_el);
 
     RUN_TEST(test_generic_array_two_el_update_first);
+    // RUN_TEST(test_generic_array_one_el_update_index_error);
     RUN_TEST(test_generic_array_two_el_update_both);
 
     RUN_TEST(test_generic_array_insert_one_get_first_el);
+    // RUN_TEST(test_generic_array_insert_one_get_index_error);
     RUN_TEST(test_generic_array_insert_two_get_two_el);
     RUN_TEST(test_generic_array_insert_three_get_last_el);
 

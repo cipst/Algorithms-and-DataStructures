@@ -84,7 +84,7 @@ void* generic_array_update_at(GenericArray* array_ptr, void* new_el_ptr, unsigne
         fprintf(stderr, "generic_array_update_at(): new_el_ptr parameter is NULL.\n");
         exit(EXIT_FAILURE);
     }
-    if (index >= array_ptr->size) {
+    if (index >= array_ptr->num_el) {
         fprintf(stderr, "generic_array_update_at(%lu): index out of bound.\n", index);
         exit(EXIT_FAILURE);
     }
