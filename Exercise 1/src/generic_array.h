@@ -37,6 +37,16 @@ unsigned long generic_array_size(GenericArray* array_ptr);
 void* generic_array_insert(GenericArray* array_ptr, void* new_el_ptr);
 
 /**
+ * Modify an element in the array_ptr at the given position
+ * @param array_ptr pointer to a generic array
+ * @param new_el_ptr pointer to an element
+ * @param index position to update
+ * @return the pointer to the updated element on success
+ * @author Stefano Cipolletta
+ * */
+void* generic_array_update_at(GenericArray* array_ptr, void* new_el_ptr, unsigned long index);
+
+/**
  * @param array_ptr pointer to a generic array
  * @param index generic array index
  * @return a pointer to the element in that position

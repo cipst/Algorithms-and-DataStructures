@@ -75,6 +75,23 @@ void* generic_array_insert(GenericArray* array_ptr, void* new_el_ptr) {
     return (array_ptr->array)[array_ptr->num_el - 1];
 }
 
+void* generic_array_update_at(GenericArray* array_ptr, void* new_el_ptr, unsigned long index) {
+    if (array_ptr == NULL) {
+        fprintf(stderr, "generic_array_update_at(): array_ptr parameter is NULL.\n");
+        exit(EXIT_FAILURE);
+    }
+    if (new_el_ptr == NULL) {
+        fprintf(stderr, "generic_array_update_at(): new_el_ptr parameter is NULL.\n");
+        exit(EXIT_FAILURE);
+    }
+    if (index >= array_ptr->size) {
+        fprintf(stderr, "generic_array_update_at(%lu): index out of bound.\n", index);
+        exit(EXIT_FAILURE);
+    }
+    (array_ptr->array)[index] = new_el_ptr;
+    return (array_ptr->array)[index];
+}
+
 void* generic_array_get(GenericArray* array_ptr, unsigned long index) {
     if (array_ptr == NULL) {
         fprintf(stderr, "generic_array_get(): array_ptr parameter is NULL.\n");
