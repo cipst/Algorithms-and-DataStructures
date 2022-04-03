@@ -27,7 +27,7 @@ void setUp(void) {
     i4 = 14;
     i5 = 7;
     i6 = 9;
-    i7 = 7;
+    i7 = 5;
     i8 = 41;
     i9 = 76;
     i10 = 0;
@@ -84,10 +84,33 @@ static void test_array_ten_el_swap_first_last(void) {
     TEST_ASSERT_EQUAL_PTR_ARRAY(act_arr, exp_arr, 10);
 }
 
-static void test_array
+// TEST QUICKSORT
+static void test_quick_sort_array_ten_el(void) {
+    int* exp_arr[] = {&i10, &i7, &i5, &i6, &i4, &i8, &i2, &i1, &i9, &i3};
 
-    int
-    main(void) {
+    generic_array_insert(generic_array_int, &i1);
+    generic_array_insert(generic_array_int, &i2);
+    generic_array_insert(generic_array_int, &i3);
+    generic_array_insert(generic_array_int, &i4);
+    generic_array_insert(generic_array_int, &i5);
+    generic_array_insert(generic_array_int, &i6);
+    generic_array_insert(generic_array_int, &i7);
+    generic_array_insert(generic_array_int, &i8);
+    generic_array_insert(generic_array_int, &i9);
+    generic_array_insert(generic_array_int, &i10);
+
+    quick_sort(generic_array_int, compare_int);
+
+    int** act_arr = malloc(10 * sizeof(int*));
+
+    for (unsigned long i = 0; i < 10; ++i) {
+        act_arr[i] = (int*)generic_array_get(generic_array_int, i);
+    }
+
+    TEST_ASSERT_EQUAL_PTR_ARRAY(exp_arr, act_arr, 10);
+}
+
+int main(void) {
     UNITY_BEGIN();
 
     // TEST ERROR
@@ -97,6 +120,9 @@ static void test_array
     // TEST SWAP
     RUN_TEST(test_array_two_el_swap_two_el);
     RUN_TEST(test_array_ten_el_swap_first_last);
+
+    // TEST QUICKSORT
+    RUN_TEST(test_quick_sort_array_ten_el);
 
     return UNITY_END();
 }
