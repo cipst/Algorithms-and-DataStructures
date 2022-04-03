@@ -22,14 +22,14 @@ struct _GenericArray {
 GenericArray* generic_array_create() {
     GenericArray* array_ptr = (GenericArray*)malloc(sizeof(GenericArray));
     if (array_ptr == NULL) {
-        fprintf(stderr, "generic_array_create(): Unable to allocate memory for the new array.\n");
-        exit(EXIT_FAILURE);
+        // fprintf(stderr, "generic_array_create(): Unable to allocate memory for the new array.\n");
+        return NULL;
     }
 
     array_ptr->array = malloc(INITIAL_ARRAY_SIZE * sizeof(void*));
     if (array_ptr->array == NULL) {
-        fprintf(stderr, "generic_array_create(): Unable to allocate memory for the new array.\n");
-        exit(EXIT_FAILURE);
+        // fprintf(stderr, "generic_array_create(): Unable to allocate memory for the new array.\n");
+        return NULL;
     }
 
     for (unsigned long i = 0; i < INITIAL_ARRAY_SIZE; ++i) {
@@ -44,26 +44,26 @@ GenericArray* generic_array_create() {
 
 unsigned long generic_array_size(GenericArray* array_ptr) {
     if (array_ptr == NULL) {
-        fprintf(stderr, "generic_array_size(): array_ptr parameter is NULL.\n");
-        exit(EXIT_FAILURE);
+        // fprintf(stderr, "generic_array_size(): array_ptr parameter is NULL.\n");
+        return 0;
     }
     return (array_ptr->num_el);
 }
 
 void* generic_array_insert(GenericArray* array_ptr, void* new_el_ptr) {
     if (array_ptr == NULL) {
-        fprintf(stderr, "generic_array_insert(): array_ptr parameter is NULL.\n");
-        exit(EXIT_FAILURE);
+        // fprintf(stderr, "generic_array_insert(): array_ptr parameter is NULL.\n");
+        return NULL;
     }
     if (new_el_ptr == NULL) {
-        fprintf(stderr, "generic_array_insert(): new_el_ptr parameter is NULL.\n");
-        exit(EXIT_FAILURE);
+        // fprintf(stderr, "generic_array_insert(): new_el_ptr parameter is NULL.\n");
+        return NULL;
     }
     if (array_ptr->num_el >= array_ptr->size) {
         array_ptr->array = realloc(array_ptr->array, 2 * (array_ptr->size) * sizeof(void*));
         if (array_ptr->array == NULL) {
-            fprintf(stderr, "generic_array_insert(): Unable to reallocate memory for the array.\n");
-            exit(EXIT_FAILURE);
+            // fprintf(stderr, "generic_array_insert(): Unable to reallocate memory for the array.\n");
+            return NULL;
         }
         // Sets new uninitialized pointers to NULL.
         for (unsigned long i = array_ptr->size; i < (2 * array_ptr->size); i++)
@@ -77,16 +77,16 @@ void* generic_array_insert(GenericArray* array_ptr, void* new_el_ptr) {
 
 void* generic_array_update_at(GenericArray* array_ptr, void* new_el_ptr, unsigned long index) {
     if (array_ptr == NULL) {
-        fprintf(stderr, "generic_array_update_at(): array_ptr parameter is NULL.\n");
-        exit(EXIT_FAILURE);
+        // fprintf(stderr, "generic_array_update_at(): array_ptr parameter is NULL.\n");
+        return NULL;
     }
     if (new_el_ptr == NULL) {
-        fprintf(stderr, "generic_array_update_at(): new_el_ptr parameter is NULL.\n");
-        exit(EXIT_FAILURE);
+        // fprintf(stderr, "generic_array_update_at(): new_el_ptr parameter is NULL.\n");
+        return NULL;
     }
     if (index >= array_ptr->num_el) {
-        fprintf(stderr, "generic_array_update_at(%lu): index out of bound.\n", index);
-        exit(EXIT_FAILURE);
+        // fprintf(stderr, "generic_array_update_at(%lu): index out of bound.\n", index);
+        return NULL;
     }
     (array_ptr->array)[index] = new_el_ptr;
     return (array_ptr->array)[index];
@@ -94,20 +94,20 @@ void* generic_array_update_at(GenericArray* array_ptr, void* new_el_ptr, unsigne
 
 void* generic_array_get(GenericArray* array_ptr, unsigned long index) {
     if (array_ptr == NULL) {
-        fprintf(stderr, "generic_array_get(): array_ptr parameter is NULL.\n");
-        exit(EXIT_FAILURE);
+        // fprintf(stderr, "generic_array_get(): array_ptr parameter is NULL.\n");
+        return NULL;
     }
     if (index >= array_ptr->num_el) {
-        fprintf(stderr, "generic_array_get(%lu): index out of bound.\n", index);
-        exit(EXIT_FAILURE);
+        // fprintf(stderr, "generic_array_get(%lu): index out of bound.\n", index);
+        return NULL;
     }
     return (array_ptr->array)[index];
 }
 
-void generic_array_clear(GenericArray* array_ptr) {
+int generic_array_clear(GenericArray* array_ptr) {
     if (array_ptr == NULL) {
-        fprintf(stderr, "generic_array_clear(): array_ptr parameter is NULL.\n");
-        exit(EXIT_FAILURE);
+        // fprintf(stderr, "generic_array_clear(): array_ptr parameter is NULL.\n");
+        return -1;
     }
 
     for (unsigned long i = 0; i < array_ptr->num_el; ++i) {
@@ -118,14 +118,16 @@ void generic_array_clear(GenericArray* array_ptr) {
     }
 
     array_ptr->num_el = 0;
+    return 1;
 }
 
-void generic_array_destroy(GenericArray* array_ptr) {
+int generic_array_destroy(GenericArray* array_ptr) {
     if (array_ptr == NULL) {
-        fprintf(stderr, "generic_array_destroy(): array_ptr parameter is NULL.\n");
-        exit(EXIT_FAILURE);
+        // fprintf(stderr, "generic_array_destroy(): array_ptr parameter is NULL.\n");
+        return -1;
     }
 
     free(array_ptr->array);
     free(array_ptr);
+    return 1;
 }
