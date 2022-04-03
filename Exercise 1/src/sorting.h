@@ -22,6 +22,15 @@
  * */
 void quick_sort(GenericArray* unsorted_array, int (*compare)(void*, void*));
 
-void swap(GenericArray* unsorted_array, unsigned long index1, unsigned long index2);
+/**
+ * Function that exchanges the first element with the second element.
+ * @param unsorted_array pointer to a GenericArray structure containing the elements that have to be swapped
+ * @param index1 first index of the first element to swap
+ * @param index2 second index of the second element to swap
+ * @return 1 on success, -1 otherwise
+ * @pre GenericArray cannot be NULL
+ * @author Stefano Cipolletta
+ * */
+int swap(GenericArray* unsorted_array, unsigned long index1, unsigned long index2);
 
 #endif /*SORTING_H_adsnoiqpfmoa*/
