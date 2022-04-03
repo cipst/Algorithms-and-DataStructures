@@ -10,7 +10,7 @@
 #include <stdlib.h>
 
 /**
- * Wrapper function for quick_sort().
+ * Core function for quick_sort().
  * It helps to pass start and finish index of the unsorted_array to be sort
  * @param unsorted_array unsorted array
  * @param compare pointer to a function which determines the precedence relation between the array elements.
@@ -21,7 +21,7 @@
  * @param last index of the last element in the unsorted array
  * @author Stefano Cipolletta
  * */
-static void quick_sort_wrap(GenericArray* unsorted_arrat, int (*compare)(void*, void*), unsigned long first, unsigned long last);
+static void quick_sort_core(GenericArray* unsorted_arrat, int (*compare)(void*, void*), unsigned long first, unsigned long last);
 
 /**
  * Partition the unsorted_array.
@@ -49,18 +49,18 @@ void quick_sort(GenericArray* unsorted_array, int (*compare)(void*, void*)) {
     }
     unsigned long n = generic_array_size(unsorted_array);
     if (n > 1)
-        quick_sort_wrap(unsorted_array, compare, 0, n - 1);
+        quick_sort_core(unsorted_array, compare, 0, n - 1);
 }
 
-static void quick_sort_wrap(GenericArray* unsorted_array, int (*compare)(void*, void*), unsigned long first, unsigned long last) {
+static void quick_sort_core(GenericArray* unsorted_array, int (*compare)(void*, void*), unsigned long first, unsigned long last) {
     if (generic_array_size(unsorted_array) > 1) {  // at least 2 elements in the unsorted array (with 1 element the array is ordered)
         unsigned long p = partition(unsorted_array, compare, first, last);
 
         if (p > first + 1)  // at least 2 elements before the pivot
-            quick_sort_wrap(unsorted_array, compare, first, p - 1);
+            quick_sort_core(unsorted_array, compare, first, p - 1);
 
         if (p < last - 1)  // at least 2 elements after the pivot
-            quick_sort_wrap(unsorted_array, compare, p + 1, last);
+            quick_sort_core(unsorted_array, compare, p + 1, last);
     }
 }
 
