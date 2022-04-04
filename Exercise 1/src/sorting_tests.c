@@ -110,6 +110,19 @@ static void test_quick_sort_array_ten_el(void) {
     TEST_ASSERT_EQUAL_PTR_ARRAY(exp_arr, act_arr, 10);
 }
 
+static void test_quick_sort_array_one_el(void) {
+    int* exp_arr[] = {&i7};
+
+    generic_array_insert(generic_array_int, &i7);
+    quick_sort(generic_array_int, compare_int);
+
+    int** act_arr = malloc(1 * sizeof(int*));
+
+    act_arr[0] = generic_array_get(generic_array_int, 0);
+
+    TEST_ASSERT_EQUAL_PTR_ARRAY(exp_arr, act_arr, 1);
+}
+
 int main(void) {
     UNITY_BEGIN();
 
@@ -123,6 +136,7 @@ int main(void) {
 
     // TEST QUICKSORT
     RUN_TEST(test_quick_sort_array_ten_el);
+    RUN_TEST(test_quick_sort_array_one_el);
 
     return UNITY_END();
 }
