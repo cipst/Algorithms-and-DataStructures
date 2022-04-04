@@ -1,7 +1,7 @@
 /**
  * @file generic_array.c
  * @author Stefano Cipolletta
- * @version v0.1
+ * @version v0.2
  * */
 
 #include "generic_array.h"

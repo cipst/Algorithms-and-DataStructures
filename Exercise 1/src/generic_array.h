@@ -1,7 +1,7 @@
 /**
  * @file generic_array.h
  * @author Stefano Cipolletta
- * @version v0.1
+ * @version v0.2
  * */
 
 #ifndef GENERIC_ARRAY_H_adsnoiqpfmoa
