@@ -36,7 +36,7 @@ int swap(GenericArray* unsorted_array, unsigned long index1, unsigned long index
 /**
  * Orders the array using the binary insertion sort algorithm
  * @param unsorted_array unsorted array
- * @param comparepointer pointer to a function which determines the precedence relation between the array elements.
+ * @param compare pointer to a function which determines the precedence relation between the array elements.
  * It returns 1 iff the first element is greater than the second.
  * It returns -1 iff the first element is smaller than the second.
  * It returns 0 iff the first and the second elements are equal.

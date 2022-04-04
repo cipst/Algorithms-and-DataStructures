@@ -123,6 +123,32 @@ static void test_quick_sort_array_one_el(void) {
     TEST_ASSERT_EQUAL_PTR_ARRAY(exp_arr, act_arr, 1);
 }
 
+// TEST BINARY_INSERTION_SORT
+static void test_binary_insertion_sort_array_ten_el(void) {
+    int* exp_arr[] = {&i10, &i7, &i5, &i6, &i4, &i8, &i2, &i1, &i9, &i3};
+
+    generic_array_insert(generic_array_int, &i1);
+    generic_array_insert(generic_array_int, &i2);
+    generic_array_insert(generic_array_int, &i3);
+    generic_array_insert(generic_array_int, &i4);
+    generic_array_insert(generic_array_int, &i5);
+    generic_array_insert(generic_array_int, &i6);
+    generic_array_insert(generic_array_int, &i7);
+    generic_array_insert(generic_array_int, &i8);
+    generic_array_insert(generic_array_int, &i9);
+    generic_array_insert(generic_array_int, &i10);
+
+    generic_array_int = binary_insertion_sort(generic_array_int, compare_int);
+
+    int** act_arr = malloc(10 * sizeof(int*));
+
+    for (unsigned long i = 0; i < 10; ++i) {
+        act_arr[i] = (int*)generic_array_get(generic_array_int, i);
+    }
+
+    TEST_ASSERT_EQUAL_PTR_ARRAY(exp_arr, act_arr, 10);
+}
+
 int main(void) {
     UNITY_BEGIN();
 
@@ -137,6 +163,9 @@ int main(void) {
     // TEST QUICKSORT
     RUN_TEST(test_quick_sort_array_ten_el);
     RUN_TEST(test_quick_sort_array_one_el);
+
+    // TEST BINARY_INSERTION_SORT
+    RUN_TEST(test_binary_insertion_sort_array_ten_el);
 
     return UNITY_END();
 }

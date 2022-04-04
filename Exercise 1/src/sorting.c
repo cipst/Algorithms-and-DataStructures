@@ -37,6 +37,7 @@ static void quick_sort_core(GenericArray* unsorted_arrat, int (*compare)(void*, 
  * @author Stefano Cipolletta
  * */
 static unsigned long partition(GenericArray* unsorted_array, int (*compare)(void*, void*), unsigned long first, unsigned long last);
+
 /**
  * Binary Search Recursive
  * @param unsorted_array unsorted array
@@ -48,8 +49,7 @@ static unsigned long partition(GenericArray* unsorted_array, int (*compare)(void
  * @param low index of the first element in the sorted portion
  * @param high index of the last element in the sorted portion
  * @return the index where to put the element in the sorted portion of the unsorted array
- * @pre unsorted_array[first...last] is ordered
- * @post 1
+ * @pre unsorted_array[low...high] is ordered
  * @author Stefano Cipolletta
  * */
 static unsigned long binary_search(GenericArray* unsorted_array, int (*compare)(void*, void*), void* element, unsigned long low, unsigned long high);
@@ -99,15 +99,16 @@ void* binary_insertion_sort(GenericArray* unsorted_array, int (*compare)(void*, 
     unsigned long n = generic_array_size(unsorted_array);
     unsigned long j, p;
 
-    for (unsigned long i = 1; i < n; ++i) {
+    for (unsigned long i = 1; i < n; i++) {
         j = i - 1;
 
         void* selected = generic_array_get(unsorted_array, i);
+
         p = binary_search(unsorted_array, compare, selected, 0, j);
 
-        while (j >= p) {
-            swap(unsorted_array, j + 1, j);
-            --j;
+        while (j < i && j >= p) {
+            generic_array_update_at(unsorted_array, generic_array_get(unsorted_array, j), j + 1);
+            j--;
         }
 
         generic_array_update_at(unsorted_array, selected, j + 1);
@@ -150,9 +151,9 @@ static unsigned long partition(GenericArray* unsorted_array, int (*compare)(void
 
 static unsigned long binary_search(GenericArray* unsorted_array, int (*compare)(void*, void*), void* element, unsigned long low, unsigned long high) {
     if (high <= low)
-        return (compare(element, generic_array_get(unsorted_array, low)) > 0) ? (low + 1) : low;
+        return ((compare(element, generic_array_get(unsorted_array, low)) > 0) ? (low + 1) : low);
 
-    unsigned long mid = (low + high) / 2;
+    unsigned long mid = (low + high + 1) / 2;
 
     if (compare(element, generic_array_get(unsorted_array, mid)) == 0)  // element == unsorted_array[mid]
         return mid + 1;
