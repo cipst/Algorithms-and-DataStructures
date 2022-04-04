@@ -1,7 +1,7 @@
 /**
  * @file sorting.c
  * @author Stefano Cipolletta
- * @version v0.1
+ * @version v0.2
  * */
 
 #include "sorting.h"
@@ -19,7 +19,6 @@
  * It returns 0 iff the first and the second elements are equal.
  * @param first index of the first element in the unsorted array
  * @param last index of the last element in the unsorted array
- * @return 1 on success, -1 otherwise
  * @author Stefano Cipolletta
  * */
 static void quick_sort_core(GenericArray* unsorted_arrat, int (*compare)(void*, void*), unsigned long first, unsigned long last);
@@ -38,6 +37,41 @@ static void quick_sort_core(GenericArray* unsorted_arrat, int (*compare)(void*, 
  * @author Stefano Cipolletta
  * */
 static unsigned long partition(GenericArray* unsorted_array, int (*compare)(void*, void*), unsigned long first, unsigned long last);
+/**
+ * Binary Search Recursive
+ * @param unsorted_array unsorted array
+ * @param compare pointer to a function which determines the precedence relation between the array elements.
+ * It returns 1 iff the first element is greater than the second.
+ * It returns -1 iff the first element is smaller than the second.
+ * It returns 0 iff the first and the second elements are equal.
+ * @param element pointer to an element
+ * @param low index of the first element in the sorted portion
+ * @param high index of the last element in the sorted portion
+ * @return the index where to put the element in the sorted portion of the unsorted array
+ * @pre unsorted_array[first...last] is ordered
+ * @post 1
+ * @author Stefano Cipolletta
+ * */
+static unsigned long binary_search(GenericArray* unsorted_array, int (*compare)(void*, void*), void* element, unsigned long low, unsigned long high);
+
+int swap(GenericArray* unsorted_array, unsigned long index1, unsigned long index2) {
+    if (unsorted_array == NULL) {
+        // fprintf(stderr, "quick_sort(): unsorted_array parameter is NULL.\n");
+        return -1;
+    }
+    if (index1 >= generic_array_size(unsorted_array)) {
+        // fprintf(stderr, "swap(%lu): index out of bound.\n", index1);
+        return -1;
+    }
+    if (index2 >= generic_array_size(unsorted_array)) {
+        // fprintf(stderr, "swap(%lu): index out of bound.\n", index2);
+        return -1;
+    }
+    void* aux = generic_array_get(unsorted_array, index1);
+    generic_array_update_at(unsorted_array, generic_array_get(unsorted_array, index2), index1);
+    generic_array_update_at(unsorted_array, aux, index2);
+    return 1;
+}
 
 void quick_sort(GenericArray* unsorted_array, int (*compare)(void*, void*)) {
     if (unsorted_array == NULL) {
@@ -51,6 +85,35 @@ void quick_sort(GenericArray* unsorted_array, int (*compare)(void*, void*)) {
     unsigned long n = generic_array_size(unsorted_array);
     if (n > 1)
         quick_sort_core(unsorted_array, compare, 0, n - 1);
+}
+
+void* binary_insertion_sort(GenericArray* unsorted_array, int (*compare)(void*, void*)) {
+    if (unsorted_array == NULL) {
+        // fprintf(stderr, "binary_insertion_sort(): unsorted_array parameter is NULL.\n");
+        return NULL;
+    }
+    if (compare == NULL) {
+        // fprintf(stderr, "binary_insertion_sort(): compare function is NULL.\n");
+        return NULL;
+    }
+    unsigned long n = generic_array_size(unsorted_array);
+    unsigned long j, p;
+
+    for (unsigned long i = 1; i < n; ++i) {
+        j = i - 1;
+
+        void* selected = generic_array_get(unsorted_array, i);
+        p = binary_search(unsorted_array, compare, selected, 0, j);
+
+        while (j >= p) {
+            swap(unsorted_array, j + 1, j);
+            --j;
+        }
+
+        generic_array_update_at(unsorted_array, selected, j + 1);
+    }
+
+    return (unsorted_array);
 }
 
 static void quick_sort_core(GenericArray* unsorted_array, int (*compare)(void*, void*), unsigned long first, unsigned long last) {
@@ -85,21 +148,17 @@ static unsigned long partition(GenericArray* unsorted_array, int (*compare)(void
     return j;
 }
 
-int swap(GenericArray* unsorted_array, unsigned long index1, unsigned long index2) {
-    if (unsorted_array == NULL) {
-        // fprintf(stderr, "quick_sort(): unsorted_array parameter is NULL.\n");
-        return -1;
-    }
-    if (index1 >= generic_array_size(unsorted_array)) {
-        // fprintf(stderr, "swap(%lu): index out of bound.\n", index1);
-        return -1;
-    }
-    if (index2 >= generic_array_size(unsorted_array)) {
-        // fprintf(stderr, "swap(%lu): index out of bound.\n", index2);
-        return -1;
-    }
-    void* aux = generic_array_get(unsorted_array, index1);
-    generic_array_update_at(unsorted_array, generic_array_get(unsorted_array, index2), index1);
-    generic_array_update_at(unsorted_array, aux, index2);
-    return 1;
+static unsigned long binary_search(GenericArray* unsorted_array, int (*compare)(void*, void*), void* element, unsigned long low, unsigned long high) {
+    if (high <= low)
+        return (compare(element, generic_array_get(unsorted_array, low)) > 0) ? (low + 1) : low;
+
+    unsigned long mid = (low + high) / 2;
+
+    if (compare(element, generic_array_get(unsorted_array, mid)) == 0)  // element == unsorted_array[mid]
+        return mid + 1;
+
+    if (compare(element, generic_array_get(unsorted_array, mid)) > 0)  // element > unsorted_array[mid]
+        return binary_search(unsorted_array, compare, element, mid + 1, high);
+
+    return binary_search(unsorted_array, compare, element, low, mid - 1);  // element < unsorted_array[mid]
 }

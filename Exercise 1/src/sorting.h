@@ -1,7 +1,7 @@
 /**
  * @file sorting.h
  * @author Stefano Cipolletta
- * @version v0.1
+ * @version v0.2
  * */
 
 #ifndef SORTING_H_adsnoiqpfmoa
@@ -15,7 +15,7 @@
  * @param compare pointer to a function which determines the precedence relation between the array elements.
  * It returns 1 iff the first element is greater than the second.
  * It returns -1 iff the first element is smaller than the second.
- * It return 0 iff the first and the second elements are equal.
+ * It returns 0 iff the first and the second elements are equal.
  * @pre GenericArray cannot be NULL
  * @pre *compare must be a reference to a valid function
  * @author Stefano Cipolletta
@@ -32,5 +32,17 @@ void quick_sort(GenericArray* unsorted_array, int (*compare)(void*, void*));
  * @author Stefano Cipolletta
  * */
 int swap(GenericArray* unsorted_array, unsigned long index1, unsigned long index2);
+
+/**
+ * Orders the array using the binary insertion sort algorithm
+ * @param unsorted_array unsorted array
+ * @param comparepointer pointer to a function which determines the precedence relation between the array elements.
+ * It returns 1 iff the first element is greater than the second.
+ * It returns -1 iff the first element is smaller than the second.
+ * It returns 0 iff the first and the second elements are equal.
+ * @return GenericArray pointer on success, NULL otherwise
+ * @author Stefano Cipolletta
+ * */
+void* binary_insertion_sort(GenericArray* unsorted_array, int (*compare)(void*, void*));
 
 #endif /*SORTING_H_adsnoiqpfmoa*/
