@@ -21,16 +21,16 @@ static int compare_int(void* i1_p, void* i2_p) {
 
 // Function called on test to initialize the environment
 void setUp(void) {
-    i1 = 53;
-    i2 = 47;
-    i3 = 91;
-    i4 = 14;
-    i5 = 7;
-    i6 = 9;
-    i7 = 5;
-    i8 = 41;
-    i9 = 76;
-    i10 = 0;
+    i1 = 233460;
+    i2 = 4741192;
+    i3 = 1014671;
+    i4 = 496325;
+    i5 = 4476757;
+    i6 = 3754104;
+    i7 = 4271997;
+    i8 = 4896376;
+    i9 = 2735414;
+    i10 = 2163766;
     generic_array_int = generic_array_create();
 }
 
@@ -86,7 +86,7 @@ static void test_array_ten_el_swap_first_last(void) {
 
 // TEST QUICKSORT
 static void test_quick_sort_array_ten_el(void) {
-    int* exp_arr[] = {&i10, &i7, &i5, &i6, &i4, &i8, &i2, &i1, &i9, &i3};
+    int* exp_arr[] = {&i1, &i4, &i3, &i10, &i9, &i6, &i7, &i5, &i2, &i8};
 
     generic_array_insert(generic_array_int, &i1);
     generic_array_insert(generic_array_int, &i2);
@@ -125,7 +125,7 @@ static void test_quick_sort_array_one_el(void) {
 
 // TEST BINARY_INSERTION_SORT
 static void test_binary_insertion_sort_array_ten_el(void) {
-    int* exp_arr[] = {&i10, &i7, &i5, &i6, &i4, &i8, &i2, &i1, &i9, &i3};
+    int* exp_arr[] = {&i1, &i4, &i3, &i10, &i9, &i6, &i7, &i5, &i2, &i8};
 
     generic_array_insert(generic_array_int, &i1);
     generic_array_insert(generic_array_int, &i2);

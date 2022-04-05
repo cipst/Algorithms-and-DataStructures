@@ -8,6 +8,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 /**
  * quick_sort() core function.
@@ -59,11 +60,12 @@ int swap(GenericArray* unsorted_array, unsigned long index1, unsigned long index
         // fprintf(stderr, "quick_sort(): unsorted_array parameter is NULL.\n");
         return -1;
     }
-    if (index1 >= generic_array_size(unsorted_array)) {
+    unsigned long size = generic_array_size(unsorted_array);
+    if (index1 >= size) {
         // fprintf(stderr, "swap(%lu): index out of bound.\n", index1);
         return -1;
     }
-    if (index2 >= generic_array_size(unsorted_array)) {
+    if (index2 >= size) {
         // fprintf(stderr, "swap(%lu): index out of bound.\n", index2);
         return -1;
     }
@@ -120,6 +122,7 @@ void* binary_insertion_sort(GenericArray* unsorted_array, int (*compare)(void*, 
 static void quick_sort_core(GenericArray* unsorted_array, int (*compare)(void*, void*), unsigned long first, unsigned long last) {
     if ((last - first) > 1) {  // at least 2 elements in the unsorted array (with 1 element the array is ordered)
 
+        // printf(" FIRST:%lu | LAST:%lu\n", first, last);
         unsigned long p = partition(unsorted_array, compare, first, last);
 
         if (p > first + 1)  // at least 2 elements before the pivot
@@ -132,20 +135,25 @@ static void quick_sort_core(GenericArray* unsorted_array, int (*compare)(void*, 
 
 static unsigned long partition(GenericArray* unsorted_array, int (*compare)(void*, void*), unsigned long first, unsigned long last) {
     unsigned long i = first + 1;
-    unsigned long j = (last - first);
+    unsigned long j = last;
+    void* el = generic_array_get(unsorted_array, first);
 
     while (i <= j) {
-        if ((*compare)(generic_array_get(unsorted_array, i), generic_array_get(unsorted_array, first)) <= 0) {  // unsorted_array[i] <= unsorted_array[p]
+        // printf("i:%lu | j:%lu", i, j);
+        if ((*compare)(generic_array_get(unsorted_array, i), el) <= 0) {  // unsorted_array[i] <= unsorted_array[p]
             ++i;
-        } else if ((*compare)(generic_array_get(unsorted_array, j), generic_array_get(unsorted_array, first)) > 0) {  // unsorted_array[j] > unsorted_array[p]
+        } else if ((*compare)(generic_array_get(unsorted_array, j), el) > 0) {  // unsorted_array[j] > unsorted_array[p]
             --j;
         } else {
             swap(unsorted_array, i, j);
             ++i;
             --j;
         }
+        // printf(" - i:%lu | j:%lu\n", i, j);
     }
     swap(unsorted_array, first, j);
+    // printf("first:%lu | j:%lu swapped\n", first, j);
+    // sleep(1);
     return j;
 }
 
