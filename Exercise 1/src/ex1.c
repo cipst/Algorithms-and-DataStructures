@@ -17,6 +17,9 @@ typedef struct _Record {
     float field3;
 } Record;
 
+time_t seconds;
+struct tm *timeStruct;
+
 static void load_array(const char *file_name, GenericArray *array) {
     char *read_line_p;
     char buffer[1024];
@@ -75,13 +78,13 @@ static void load_array(const char *file_name, GenericArray *array) {
 }
 
 static void print_array(GenericArray *array) {
-    unsigned long el_num = generic_array_size(array);
+    // unsigned long el_num = generic_array_size(array);
 
     Record *element;
 
     printf("\nGENERIC ARRAY OF RECORDS\n");
 
-    for (unsigned long i = 0; i < el_num; i++) {
+    for (unsigned long i = 0; i < 20; i++) {
         element = (Record *)generic_array_get(array, i);
         printf("<%d, %s, %d, %f>\n", element->id, element->field1, element->field2, element->field3);
         fflush(stdout);
@@ -92,6 +95,30 @@ static void free_array_content(GenericArray *array_to_free) {
     for (unsigned long i = 0; i < generic_array_size(array_to_free); i++) {
         free(generic_array_get(array_to_free, i));
     }
+}
+
+static int compare_record_string_field(void *r1_p, void *r2_p) {
+    if (r1_p == NULL) {
+        fprintf(stderr, "compare_record_string_field: the first parameter is a null pointer");
+        exit(EXIT_FAILURE);
+    }
+    if (r2_p == NULL) {
+        fprintf(stderr, "compare_record_string_field: the second parameter is a null pointer");
+        exit(EXIT_FAILURE);
+    }
+    Record *rec1_p = (Record *)r1_p;
+    Record *rec2_p = (Record *)r2_p;
+
+    int ris = strcmp(rec1_p->field1, rec2_p->field1);
+
+    printf("%s | %s\n", rec1_p->field1, rec2_p->field1);
+
+    if (ris > 0)
+        return (1);
+    else if (ris < 0)
+        return (-1);
+    else
+        return (0);
 }
 
 static int compare_record_int_field(void *r1_p, void *r2_p) {
@@ -114,19 +141,52 @@ static int compare_record_int_field(void *r1_p, void *r2_p) {
         return (0);
 }
 
-// It should be invoked with one parameter specifying the path of the data file
-int main(int argc, char const *argv[]) {
-    if (argc < 2) {
-        fprintf(stderr, "Usage: ./ex1 <file_name>\n");
+static int compare_record_float_field(void *r1_p, void *r2_p) {
+    if (r1_p == NULL) {
+        fprintf(stderr, "compare_record_float_field: the first parameter is a null pointer");
         exit(EXIT_FAILURE);
     }
+    if (r2_p == NULL) {
+        fprintf(stderr, "compare_record_float_field: the second parameter is a null pointer");
+        exit(EXIT_FAILURE);
+    }
+    Record *rec1_p = (Record *)r1_p;
+    Record *rec2_p = (Record *)r2_p;
 
+    if (rec1_p->field3 > rec2_p->field3)
+        return (1);
+    else if (rec1_p->field3 < rec2_p->field3)
+        return (-1);
+    else
+        return (0);
+}
+
+static void test_quick_sort_string_field(char const *path) {
     GenericArray *array = generic_array_create();
 
-    load_array(argv[1], array);
+    load_array(path, array);
+    print_array(array);
 
-    time_t seconds;
-    struct tm *timeStruct;
+    seconds = time(NULL);
+    timeStruct = localtime(&seconds);
+
+    printf("\n\e[1;31mStarting QuickSort... [%d:%d:%d]\n\e[0m", timeStruct->tm_hour, timeStruct->tm_min, timeStruct->tm_sec);
+    quick_sort(array, compare_record_string_field);
+
+    seconds = time(NULL);
+    timeStruct = localtime(&seconds);
+    printf("\n\e[1;31mQuickSort Ended [%d:%d:%d]\n\e[0m", timeStruct->tm_hour, timeStruct->tm_min, timeStruct->tm_sec);
+
+    print_array(array);
+    free_array_content(array);
+    generic_array_destroy(array);
+}
+
+static void test_quick_sort_int_field(char const *path) {
+    GenericArray *array = generic_array_create();
+
+    load_array(path, array);
+    // print_array(array);
 
     seconds = time(NULL);
     timeStruct = localtime(&seconds);
@@ -138,9 +198,42 @@ int main(int argc, char const *argv[]) {
     timeStruct = localtime(&seconds);
     printf("\n\e[1;31mQuickSort Ended [%d:%d:%d]\n\e[0m", timeStruct->tm_hour, timeStruct->tm_min, timeStruct->tm_sec);
 
-    // print_array(array);
+    print_array(array);
     free_array_content(array);
     generic_array_destroy(array);
+}
+
+static void test_quick_sort_float_field(char const *path) {
+    GenericArray *array = generic_array_create();
+
+    load_array(path, array);
+    // print_array(array);
+
+    seconds = time(NULL);
+    timeStruct = localtime(&seconds);
+
+    printf("\n\e[1;31mStarting QuickSort... [%d:%d:%d]\n\e[0m", timeStruct->tm_hour, timeStruct->tm_min, timeStruct->tm_sec);
+    quick_sort(array, compare_record_float_field);
+
+    seconds = time(NULL);
+    timeStruct = localtime(&seconds);
+    printf("\n\e[1;31mQuickSort Ended [%d:%d:%d]\n\e[0m", timeStruct->tm_hour, timeStruct->tm_min, timeStruct->tm_sec);
+
+    print_array(array);
+    free_array_content(array);
+    generic_array_destroy(array);
+}
+
+// It should be invoked with one parameter specifying the path of the data file
+int main(int argc, char const *argv[]) {
+    if (argc < 2) {
+        fprintf(stderr, "Usage: ./ex1 <file_name>\n");
+        exit(EXIT_FAILURE);
+    }
+
+    test_quick_sort_string_field(argv[1]);
+    // test_quick_sort_int_field(argv[1]);
+    // test_quick_sort_float_field(argv[1]);
 
     return EXIT_SUCCESS;
 }
