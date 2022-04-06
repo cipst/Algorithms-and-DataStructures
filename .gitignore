@@ -1,1 +1,6 @@
 *.csv
+*.o
+
+# PER ESERCIZIO 1
+Exercise\ 1/bin
+Exercise\ 1/build
