@@ -2,5 +2,7 @@
 *.o
 
 # PER ESERCIZIO 1
-Exercise\ 1/bin
-Exercise\ 1/build
+ex1/bin
+ex1/build
+
+# PER ESERCIZIO 2
