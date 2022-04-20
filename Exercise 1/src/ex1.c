@@ -35,6 +35,7 @@ static void load_array(const char *file_name, GenericArray *array) {
         exit(EXIT_FAILURE);
     }
 
+    // int count = 0;
     while (fgets(buffer, buf_size, fp) != NULL) {
         read_line_p = malloc((strlen(buffer) + 1) * sizeof(char));
         if (read_line_p == NULL) {
@@ -69,22 +70,24 @@ static void load_array(const char *file_name, GenericArray *array) {
         record_p->field2 = field2;
         record_p->field3 = field3;
 
+        // count++;
         generic_array_insert(array, (void *)record_p);
         free(read_line_p);
     }
 
     fclose(fp);
     printf("\nData loaded\n");
+    fflush(stdout);
 }
 
 static void print_array(GenericArray *array) {
-    // unsigned long el_num = generic_array_size(array);
+    unsigned long el_num = generic_array_size(array);
 
     Record *element;
 
     printf("\nGENERIC ARRAY OF RECORDS\n");
 
-    for (unsigned long i = 0; i < 20; i++) {
+    for (unsigned long i = 0; i < el_num; i++) {
         element = (Record *)generic_array_get(array, i);
         printf("<%d, %s, %d, %f>\n", element->id, element->field1, element->field2, element->field3);
         fflush(stdout);
@@ -93,6 +96,7 @@ static void print_array(GenericArray *array) {
 
 static void free_array_content(GenericArray *array_to_free) {
     for (unsigned long i = 0; i < generic_array_size(array_to_free); i++) {
+        free(((Record *)generic_array_get(array_to_free, i))->field1);
         free(generic_array_get(array_to_free, i));
     }
 }
@@ -109,16 +113,16 @@ static int compare_record_string_field(void *r1_p, void *r2_p) {
     Record *rec1_p = (Record *)r1_p;
     Record *rec2_p = (Record *)r2_p;
 
-    int ris = strcmp(rec1_p->field1, rec2_p->field1);
+    int ris = strcmp((const char *)rec1_p->field1, (const char *)rec2_p->field1);
 
-    printf("%s | %s\n", rec1_p->field1, rec2_p->field1);
+    // if (ris > 0)
+    //     return (1);
+    // else if (ris < 0)
+    //     return (-1);
+    // else
+    //     return (0);
 
-    if (ris > 0)
-        return (1);
-    else if (ris < 0)
-        return (-1);
-    else
-        return (0);
+    return ris;
 }
 
 static int compare_record_int_field(void *r1_p, void *r2_p) {
@@ -132,6 +136,8 @@ static int compare_record_int_field(void *r1_p, void *r2_p) {
     }
     Record *rec1_p = (Record *)r1_p;
     Record *rec2_p = (Record *)r2_p;
+
+    // printf("%d | %d\n", rec1_p->field2, rec2_p->field2);
 
     if (rec1_p->field2 > rec2_p->field2)
         return (1);
@@ -153,6 +159,8 @@ static int compare_record_float_field(void *r1_p, void *r2_p) {
     Record *rec1_p = (Record *)r1_p;
     Record *rec2_p = (Record *)r2_p;
 
+    // printf("%d | %d\n", rec1_p->field3, rec2_p->field3);
+
     if (rec1_p->field3 > rec2_p->field3)
         return (1);
     else if (rec1_p->field3 < rec2_p->field3)
@@ -161,28 +169,31 @@ static int compare_record_float_field(void *r1_p, void *r2_p) {
         return (0);
 }
 
-static void test_quick_sort_string_field(char const *path) {
+// QUICKSORT TEST
+static void test_quick_sort_string(char const *path) {
     GenericArray *array = generic_array_create();
 
     load_array(path, array);
-    print_array(array);
+    // print_array(array);
 
     seconds = time(NULL);
     timeStruct = localtime(&seconds);
 
-    printf("\n\e[1;31mStarting QuickSort... [%d:%d:%d]\n\e[0m", timeStruct->tm_hour, timeStruct->tm_min, timeStruct->tm_sec);
+    printf("\nStarting STRING QuickSort... [%d:%d:%d]\n", timeStruct->tm_hour, timeStruct->tm_min, timeStruct->tm_sec);
+    fflush(stdout);
     quick_sort(array, compare_record_string_field);
 
     seconds = time(NULL);
     timeStruct = localtime(&seconds);
-    printf("\n\e[1;31mQuickSort Ended [%d:%d:%d]\n\e[0m", timeStruct->tm_hour, timeStruct->tm_min, timeStruct->tm_sec);
+    printf("QuickSort Ended [%d:%d:%d]\n", timeStruct->tm_hour, timeStruct->tm_min, timeStruct->tm_sec);
+    fflush(stdout);
 
-    print_array(array);
+    // print_array(array);
     free_array_content(array);
     generic_array_destroy(array);
 }
 
-static void test_quick_sort_int_field(char const *path) {
+static void test_quick_sort_int(char const *path) {
     GenericArray *array = generic_array_create();
 
     load_array(path, array);
@@ -191,19 +202,19 @@ static void test_quick_sort_int_field(char const *path) {
     seconds = time(NULL);
     timeStruct = localtime(&seconds);
 
-    printf("\n\e[1;31mStarting QuickSort... [%d:%d:%d]\n\e[0m", timeStruct->tm_hour, timeStruct->tm_min, timeStruct->tm_sec);
+    printf("\nStarting INT QuickSort... [%d:%d:%d]\n", timeStruct->tm_hour, timeStruct->tm_min, timeStruct->tm_sec);
     quick_sort(array, compare_record_int_field);
 
     seconds = time(NULL);
     timeStruct = localtime(&seconds);
-    printf("\n\e[1;31mQuickSort Ended [%d:%d:%d]\n\e[0m", timeStruct->tm_hour, timeStruct->tm_min, timeStruct->tm_sec);
+    printf("\nQuickSort Ended [%d:%d:%d]\n", timeStruct->tm_hour, timeStruct->tm_min, timeStruct->tm_sec);
 
-    print_array(array);
+    // print_array(array);
     free_array_content(array);
     generic_array_destroy(array);
 }
 
-static void test_quick_sort_float_field(char const *path) {
+static void test_quick_sort_float(char const *path) {
     GenericArray *array = generic_array_create();
 
     load_array(path, array);
@@ -212,14 +223,82 @@ static void test_quick_sort_float_field(char const *path) {
     seconds = time(NULL);
     timeStruct = localtime(&seconds);
 
-    printf("\n\e[1;31mStarting QuickSort... [%d:%d:%d]\n\e[0m", timeStruct->tm_hour, timeStruct->tm_min, timeStruct->tm_sec);
+    printf("\nStarting FLOAT QuickSort... [%d:%d:%d]\n", timeStruct->tm_hour, timeStruct->tm_min, timeStruct->tm_sec);
     quick_sort(array, compare_record_float_field);
 
     seconds = time(NULL);
     timeStruct = localtime(&seconds);
-    printf("\n\e[1;31mQuickSort Ended [%d:%d:%d]\n\e[0m", timeStruct->tm_hour, timeStruct->tm_min, timeStruct->tm_sec);
+    printf("\nQuickSort Ended [%d:%d:%d]\n", timeStruct->tm_hour, timeStruct->tm_min, timeStruct->tm_sec);
 
-    print_array(array);
+    // print_array(array);
+    free_array_content(array);
+    generic_array_destroy(array);
+}
+
+// BINARY INSERTION SORT
+static void test_bin_sort_string(char const *path) {
+    GenericArray *array = generic_array_create();
+
+    load_array(path, array);
+    // print_array(array);
+
+    seconds = time(NULL);
+    timeStruct = localtime(&seconds);
+
+    printf("\nStarting STRING Binary Insertion Sort... [%d:%d:%d]\n", timeStruct->tm_hour, timeStruct->tm_min, timeStruct->tm_sec);
+    fflush(stdout);
+    binary_insertion_sort(array, compare_record_string_field);
+
+    seconds = time(NULL);
+    timeStruct = localtime(&seconds);
+    printf("\nBinary Insertion Sort Ended [%d:%d:%d]\n", timeStruct->tm_hour, timeStruct->tm_min, timeStruct->tm_sec);
+    fflush(stdout);
+
+    // print_array(array);
+    free_array_content(array);
+    generic_array_destroy(array);
+}
+
+static void test_bin_sort_int(char const *path) {
+    GenericArray *array = generic_array_create();
+
+    load_array(path, array);
+    // print_array(array);
+
+    seconds = time(NULL);
+    timeStruct = localtime(&seconds);
+
+    printf("\nStarting INT Binary Insertion Sort... [%d:%d:%d]\n", timeStruct->tm_hour, timeStruct->tm_min, timeStruct->tm_sec);
+    fflush(stdout);
+    binary_insertion_sort(array, compare_record_int_field);
+
+    seconds = time(NULL);
+    timeStruct = localtime(&seconds);
+    printf("\nBinary Insertion Sort Ended [%d:%d:%d]\n", timeStruct->tm_hour, timeStruct->tm_min, timeStruct->tm_sec);
+    fflush(stdout);
+
+    // print_array(array);
+    free_array_content(array);
+    generic_array_destroy(array);
+}
+
+static void test_bin_sort_float(char const *path) {
+    GenericArray *array = generic_array_create();
+
+    load_array(path, array);
+    // print_array(array);
+
+    seconds = time(NULL);
+    timeStruct = localtime(&seconds);
+
+    printf("\nStarting FLOAT Binary Insertion Sort... [%d:%d:%d]\n", timeStruct->tm_hour, timeStruct->tm_min, timeStruct->tm_sec);
+    binary_insertion_sort(array, compare_record_float_field);
+
+    seconds = time(NULL);
+    timeStruct = localtime(&seconds);
+    printf("\nBinary Insertion Sort Ended [%d:%d:%d]\n", timeStruct->tm_hour, timeStruct->tm_min, timeStruct->tm_sec);
+
+    // print_array(array);
     free_array_content(array);
     generic_array_destroy(array);
 }
@@ -231,9 +310,13 @@ int main(int argc, char const *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    test_quick_sort_string_field(argv[1]);
-    // test_quick_sort_int_field(argv[1]);
-    // test_quick_sort_float_field(argv[1]);
+    test_quick_sort_string(argv[1]);  // FAIL | PASS with few elements
+    // test_quick_sort_int(argv[1]);     // PASS 73sec | 36sec | 29sec
+    // test_quick_sort_float(argv[1]);   // PASS 73sec | 39sec | 39sec
+
+    // test_bin_sort_string(argv[1]);   // FAIL | PASS with few elements
+    // test_bin_sort_int(argv[1]);      // FAIL | PASS with few elements
+    // test_bin_sort_float(argv[1]);    // FAIL | PASS with few elements
 
     return EXIT_SUCCESS;
 }
