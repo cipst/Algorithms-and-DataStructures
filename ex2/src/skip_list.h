@@ -1,0 +1,63 @@
+/**
+ *  @author Stefano Cipolletta
+ *  @file skip_list.h
+ *  @version 0.1
+ * */
+
+#ifndef _SKIP_LIST_H_asoiwnfiualqi
+#define _SKIP_LIST_H_asoiwnfiualqi
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_HEIGHT 10
+
+typedef struct _SkipList SkipList;
+typedef struct _Node Node;
+
+struct _SkipList {
+    Node *head;
+    unsigned int max_level;  // current max value of size of all Node
+    int (*compare)(void *, void *);
+};
+
+struct _Node {
+    Node **next;
+    unsigned int size;  // number of node pointers
+    void *item;
+};
+
+/**
+ *  @param item pointer to the item to insert into the new Node
+ *  @param level number of level that the new Node will have
+ *  @return the pointer to the new Node
+ * */
+Node *createNode(void *item, unsigned int level);
+
+/**
+ *  @return the number of level of a Node
+ * */
+unsigned int randomLevel();
+
+/**
+ *  @param compare pointer to the function that compare two generic type
+ *      - it returns an int > 0 if the first is greater than the second
+ *      - it returns an int < 0 if the first is less than the second
+ *      - it return an int == 0 if the first is equal to the second
+ *  @return the pointer to the new SkipList
+ * */
+SkipList *createSkipList(int (*compare)(void *, void *));
+
+/**
+ *  @param list pointer to the SkipList
+ *  @param item pointer to the item to insert into the SkipList
+ * */
+void insertSkpiList(SkipList *list, void *item);
+
+/**
+ *  @param list pointer to the SkipList
+ *  @param item pointer to the item to search into the SkipList
+ * */
+void *searchSkipList(SkipList *list, void *item);
+
+#endif /* _SKIP_LIST_H_asoiwnfiualqi */
