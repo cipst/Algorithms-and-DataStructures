@@ -1,8 +1,10 @@
 *.csv
 *.o
+*.txt
 
 # PER ESERCIZIO 1
 ex1/bin
 ex1/build
 
 # PER ESERCIZIO 2
+ex2/obj
