@@ -73,8 +73,6 @@ int swap(GenericArray* unsorted_array, unsigned long index1, unsigned long index
     generic_array_update_at(unsorted_array, generic_array_get(unsorted_array, index2), index1);
     generic_array_update_at(unsorted_array, aux, index2);
 
-    // printf("tmp1:%s | tmp2:%s", (char*)tmp1, (char*)tmp2);
-
     return 1;
 }
 
@@ -139,10 +137,7 @@ static unsigned long partition(GenericArray* unsorted_array, int (*compare)(void
     unsigned long j = last;
     void* el = (void*)generic_array_get(unsorted_array, first);
 
-    // printf("%s\n", (char*)el);
-
     while (i <= j) {
-        // printf("i:%lu | j:%lu", i, j);
         if ((*compare)(generic_array_get(unsorted_array, i), el) <= 0) {  // unsorted_array[i] <= unsorted_array[p]
             ++i;
         } else if ((*compare)(generic_array_get(unsorted_array, j), el) > 0) {  // unsorted_array[j] > unsorted_array[p]
@@ -152,11 +147,8 @@ static unsigned long partition(GenericArray* unsorted_array, int (*compare)(void
             ++i;
             --j;
         }
-        // printf(" - i:%lu | j:%lu swapped\n", i, j);
     }
     swap(unsorted_array, first, j);
-    // printf("first:%lu | j:%lu swapped\n", first, j);
-    // sleep(1);
     return j;
 }
 
