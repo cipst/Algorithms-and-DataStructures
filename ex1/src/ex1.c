@@ -35,7 +35,6 @@ static void load_array(const char *file_name, GenericArray *array) {
         exit(EXIT_FAILURE);
     }
 
-    // int count = 0;
     while (fgets(buffer, buf_size, fp) != NULL) {
         read_line_p = malloc((strlen(buffer) + 1) * sizeof(char));
         if (read_line_p == NULL) {
@@ -70,7 +69,6 @@ static void load_array(const char *file_name, GenericArray *array) {
         record_p->field2 = field2;
         record_p->field3 = field3;
 
-        // count++;
         generic_array_insert(array, (void *)record_p);
         free(read_line_p);
     }
@@ -115,14 +113,8 @@ static int compare_record_string_field(void *r1_p, void *r2_p) {
 
     int ris = strcmp((const char *)rec1_p->field1, (const char *)rec2_p->field1);
 
-    // if (ris > 0)
-    //     return (1);
-    // else if (ris < 0)
-    //     return (-1);
-    // else
-    //     return (0);
-
-    return ris;
+    if (ris != 0) return ris;
+    return rec1_p->id - rec2_p->id;
 }
 
 static int compare_record_int_field(void *r1_p, void *r2_p) {
@@ -136,8 +128,6 @@ static int compare_record_int_field(void *r1_p, void *r2_p) {
     }
     Record *rec1_p = (Record *)r1_p;
     Record *rec2_p = (Record *)r2_p;
-
-    // printf("%d | %d\n", rec1_p->field2, rec2_p->field2);
 
     if (rec1_p->field2 > rec2_p->field2)
         return (1);
@@ -159,8 +149,6 @@ static int compare_record_float_field(void *r1_p, void *r2_p) {
     Record *rec1_p = (Record *)r1_p;
     Record *rec2_p = (Record *)r2_p;
 
-    // printf("%d | %d\n", rec1_p->field3, rec2_p->field3);
-
     if (rec1_p->field3 > rec2_p->field3)
         return (1);
     else if (rec1_p->field3 < rec2_p->field3)
@@ -176,17 +164,13 @@ static void test_quick_sort_string(char const *path) {
     load_array(path, array);
     // print_array(array);
 
-    seconds = time(NULL);
-    timeStruct = localtime(&seconds);
+    printf("\nStarting STRING QuickSort...\n");
 
-    printf("\nStarting STRING QuickSort... [%d:%d:%d]\n", timeStruct->tm_hour, timeStruct->tm_min, timeStruct->tm_sec);
-    fflush(stdout);
+    clock_t t = clock();
     quick_sort(array, compare_record_string_field);
+    t = clock() - t;
 
-    seconds = time(NULL);
-    timeStruct = localtime(&seconds);
-    printf("QuickSort Ended [%d:%d:%d]\n", timeStruct->tm_hour, timeStruct->tm_min, timeStruct->tm_sec);
-    fflush(stdout);
+    printf("QuickSort Ended - %f s\n\n", (((float)t) / CLOCKS_PER_SEC));
 
     // print_array(array);
     free_array_content(array);
@@ -199,15 +183,13 @@ static void test_quick_sort_int(char const *path) {
     load_array(path, array);
     // print_array(array);
 
-    seconds = time(NULL);
-    timeStruct = localtime(&seconds);
+    printf("\nStarting INT QuickSort... \n");
 
-    printf("\nStarting INT QuickSort... [%d:%d:%d]\n", timeStruct->tm_hour, timeStruct->tm_min, timeStruct->tm_sec);
+    clock_t t = clock();
     quick_sort(array, compare_record_int_field);
+    t = clock() - t;
 
-    seconds = time(NULL);
-    timeStruct = localtime(&seconds);
-    printf("\nQuickSort Ended [%d:%d:%d]\n", timeStruct->tm_hour, timeStruct->tm_min, timeStruct->tm_sec);
+    printf("QuickSort Ended - %f s\n\n", (((float)t) / CLOCKS_PER_SEC));
 
     // print_array(array);
     free_array_content(array);
@@ -220,15 +202,13 @@ static void test_quick_sort_float(char const *path) {
     load_array(path, array);
     // print_array(array);
 
-    seconds = time(NULL);
-    timeStruct = localtime(&seconds);
+    printf("\nStarting FLOAT QuickSort... \n");
 
-    printf("\nStarting FLOAT QuickSort... [%d:%d:%d]\n", timeStruct->tm_hour, timeStruct->tm_min, timeStruct->tm_sec);
+    clock_t t = clock();
     quick_sort(array, compare_record_float_field);
+    t = clock() - t;
 
-    seconds = time(NULL);
-    timeStruct = localtime(&seconds);
-    printf("\nQuickSort Ended [%d:%d:%d]\n", timeStruct->tm_hour, timeStruct->tm_min, timeStruct->tm_sec);
+    printf("QuickSort Ended - %f s\n\n", (((float)t) / CLOCKS_PER_SEC));
 
     // print_array(array);
     free_array_content(array);
@@ -242,17 +222,13 @@ static void test_bin_sort_string(char const *path) {
     load_array(path, array);
     // print_array(array);
 
-    seconds = time(NULL);
-    timeStruct = localtime(&seconds);
+    printf("\nStarting STRING Binary Insertion Sort... \n");
 
-    printf("\nStarting STRING Binary Insertion Sort... [%d:%d:%d]\n", timeStruct->tm_hour, timeStruct->tm_min, timeStruct->tm_sec);
-    fflush(stdout);
+    clock_t t = clock();
     binary_insertion_sort(array, compare_record_string_field);
+    t = clock() - t;
 
-    seconds = time(NULL);
-    timeStruct = localtime(&seconds);
-    printf("\nBinary Insertion Sort Ended [%d:%d:%d]\n", timeStruct->tm_hour, timeStruct->tm_min, timeStruct->tm_sec);
-    fflush(stdout);
+    printf("BINARY INSERTION SORT Ended - %f s\n\n", (((float)t) / CLOCKS_PER_SEC));
 
     // print_array(array);
     free_array_content(array);
@@ -265,17 +241,13 @@ static void test_bin_sort_int(char const *path) {
     load_array(path, array);
     // print_array(array);
 
-    seconds = time(NULL);
-    timeStruct = localtime(&seconds);
+    printf("\nStarting INT Binary Insertion Sort... \n");
 
-    printf("\nStarting INT Binary Insertion Sort... [%d:%d:%d]\n", timeStruct->tm_hour, timeStruct->tm_min, timeStruct->tm_sec);
-    fflush(stdout);
+    clock_t t = clock();
     binary_insertion_sort(array, compare_record_int_field);
+    t = clock() - t;
 
-    seconds = time(NULL);
-    timeStruct = localtime(&seconds);
-    printf("\nBinary Insertion Sort Ended [%d:%d:%d]\n", timeStruct->tm_hour, timeStruct->tm_min, timeStruct->tm_sec);
-    fflush(stdout);
+    printf("BINARY INSERTION SORT Ended - %f s\n\n", (((float)t) / CLOCKS_PER_SEC));
 
     // print_array(array);
     free_array_content(array);
@@ -288,15 +260,13 @@ static void test_bin_sort_float(char const *path) {
     load_array(path, array);
     // print_array(array);
 
-    seconds = time(NULL);
-    timeStruct = localtime(&seconds);
+    printf("\nStarting FLOAT Binary Insertion Sort... \n");
 
-    printf("\nStarting FLOAT Binary Insertion Sort... [%d:%d:%d]\n", timeStruct->tm_hour, timeStruct->tm_min, timeStruct->tm_sec);
+    clock_t t = clock();
     binary_insertion_sort(array, compare_record_float_field);
+    t = clock() - t;
 
-    seconds = time(NULL);
-    timeStruct = localtime(&seconds);
-    printf("\nBinary Insertion Sort Ended [%d:%d:%d]\n", timeStruct->tm_hour, timeStruct->tm_min, timeStruct->tm_sec);
+    printf("BINARY INSERTION SORT Ended - %f s\n\n", (((float)t) / CLOCKS_PER_SEC));
 
     // print_array(array);
     free_array_content(array);
@@ -310,12 +280,12 @@ int main(int argc, char const *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    test_quick_sort_string(argv[1]);  // FAIL | PASS with few elements
-    // test_quick_sort_int(argv[1]);     // PASS 73sec | 36sec | 29sec
+    // test_quick_sort_string(argv[1]);  // FAIL | PASS with few elements
+    // test_quick_sort_int(argv[1]);  // PASS 73sec | 36sec | 29sec
     // test_quick_sort_float(argv[1]);   // PASS 73sec | 39sec | 39sec
 
-    // test_bin_sort_string(argv[1]);   // FAIL | PASS with few elements
-    // test_bin_sort_int(argv[1]);      // FAIL | PASS with few elements
+    // test_bin_sort_string(argv[1]);  // FAIL | PASS with few elements
+    test_bin_sort_int(argv[1]);  // FAIL | PASS with few elements
     // test_bin_sort_float(argv[1]);    // FAIL | PASS with few elements
 
     return EXIT_SUCCESS;

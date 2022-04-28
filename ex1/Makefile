@@ -9,7 +9,7 @@ tests: bin/generic_array_tests bin/sorting_tests
 ex1: bin/ex1
 	bin/ex1 "../Resources/Datasets/records.csv" 
 
-CFLAGS = -g -Wall -Wextra -Wpedantic -Wconversion
+CFLAGS = -g -O3 -Wall -Wextra -Wpedantic -Wconversion
 
 INCLUDES = src/*.h
 
