@@ -17,13 +17,13 @@ typedef struct _Node Node;
 
 struct _SkipList {
     Node *head;
-    unsigned int max_level;  // current max value of size of all Node
+    int max_level;  // current max value of size of all Node
     int (*compare)(void *, void *);
 };
 
 struct _Node {
     Node **next;
-    unsigned int size;  // number of node pointers
+    int size;  // number of node pointers
     void *item;
 };
 
@@ -32,12 +32,12 @@ struct _Node {
  *  @param level number of level that the new Node will have
  *  @return the pointer to the new Node
  * */
-Node *createNode(void *item, unsigned int level);
+Node *createNode(void *item, int level);
 
 /**
  *  @return the number of level of a Node
  * */
-unsigned int randomLevel();
+int randomLevel();
 
 /**
  *  @param compare pointer to the function that compare two generic type
