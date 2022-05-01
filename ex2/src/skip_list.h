@@ -9,6 +9,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #define MAX_HEIGHT 10
 
@@ -58,6 +59,10 @@ void insertSkpiList(SkipList *list, void *item);
  *  @param list pointer to the SkipList
  *  @param item pointer to the item to search into the SkipList
  * */
-void *searchSkipList(SkipList *list, void *item);
+int searchSkipList(SkipList *list, void *item);
+
+void freeNode(Node *n);
+
+void freeSkipList(SkipList *l);
 
 #endif /* _SKIP_LIST_H_asoiwnfiualqi */
