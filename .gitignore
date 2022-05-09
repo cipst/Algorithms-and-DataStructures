@@ -1,6 +1,7 @@
 *.csv
 *.o
 *.txt
+*.class
 
 # PER ESERCIZIO 1
 ex1/bin
