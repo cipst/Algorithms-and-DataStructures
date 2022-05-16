@@ -132,10 +132,10 @@ public class MinimumHeap<T> {
         if (element == null)
             throw new MinimumHeapException("\nadd(element): element must be != null");
 
-        this.array.add(element);
-
         if (this.table.putIfAbsent(element, this.table.size()) != null)
             throw new MinimumHeapException("\nadd(element): element is already in the MinimumHeap");
+
+        this.array.add(element);
 
         while ((this.comparator).compare(element, parent(element)) < 0)
             swap(element, parent(element));
