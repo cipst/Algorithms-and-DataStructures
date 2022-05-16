@@ -6,24 +6,40 @@ import java.util.Hashtable;
  * Class used to manage a {@code Minimum Heap} of {@code Generic Type}
  */
 public class MinimumHeap<T> {
+
     private ArrayList<T> array = null;
     private Comparator<? super T> comparator = null;
     private Hashtable<T, Integer> table = null;
 
-    public MinimumHeap(Comparator<? super T> comparator) {
-        // if (comparator == null)
-        // throw NullPointerException("");
+    /**
+     * @param comparator used to compare two {@code Generic Type} elements
+     * @throws MinimumHeapException when {@code comparator} is {@code null}
+     */
+    public MinimumHeap(Comparator<? super T> comparator) throws MinimumHeapException {
+        if (comparator == null)
+            throw new MinimumHeapException("\nMinimumHeap(comparator): comparator must be != null");
 
         this.array = new ArrayList<>();
         this.comparator = comparator;
         this.table = new Hashtable<>();
     }
 
+    /**
+     * @return the size of the {@code MinimumHeap}
+     */
     public int size() {
         return this.array.size();
     }
 
-    public T parent(T element) {
+    /**
+     * @param element whose parent you want to find out
+     * @return the parent element if exist, the element given otherwise
+     * @throws MinimumHeapException when {@code element} is {@code null}
+     */
+    public T parent(T element) throws MinimumHeapException {
+        if (element == null)
+            throw new MinimumHeapException("\nparent(element): element must be != null");
+
         if (!this.table.containsKey(element))
             return element;
 
@@ -38,26 +54,58 @@ public class MinimumHeap<T> {
         return this.array.get(pos / 2);
     }
 
-    public T left(T element) {
+    /**
+     * @param element whose left child you want to find
+     * @return the left child element if exist, the element given otherwise
+     * @throws MinimumHeapException when {@code element} is {@code null}
+     */
+    public T left(T element) throws MinimumHeapException {
+        if (element == null)
+            throw new MinimumHeapException("\nleft(element): element must be != null");
+
         if (!this.table.containsKey(element))
             return element;
 
         Integer pos = this.table.get(element);
 
-        return this.array.get(2 * pos);
+        if (((2 * pos) + 1) < this.array.size())
+            return this.array.get((2 * pos) + 1);
+        else
+            return element;
     }
 
-    public T right(T element) {
+    /**
+     * @param element whose right child you want to find
+     * @return the right child element if exist, the element given otherwise
+     * @throws MinimumHeapException when {@code element} is {@code null}
+     */
+    public T right(T element) throws MinimumHeapException {
+        if (element == null)
+            throw new MinimumHeapException("\nright(element): element must be != null");
+
         if (!this.table.containsKey(element))
             return element;
 
         Integer pos = this.table.get(element);
 
-        return this.array.get((2 * pos) + 1);
+        if (((2 * pos) + 2) < this.array.size())
+            return this.array.get((2 * pos) + 2);
+        else
+            return element;
     }
 
-    private void swap(T o1, T o2) {
-        System.out.println("Swapping: " + o1 + " <--> " + o2);
+    /**
+     * @param o1 an element of the {@code MinimumHeap}
+     * @param o2 an element of the {@code MinimumHeap}
+     * @throws MinimumHeapException when {@code o1} or {@code o2} are {@code null}
+     */
+    private void swap(T o1, T o2) throws MinimumHeapException {
+        if (o1 == null)
+            throw new MinimumHeapException("\nswap(o1, o2): o1 must be != null");
+
+        if (o2 == null)
+            throw new MinimumHeapException("\nswap(o1, o2): o2 must be != null");
+
         Integer i_o1 = this.table.get(o1);
         Integer i_o2 = this.table.get(o2);
         T tmp = this.array.get(i_o1);
@@ -69,54 +117,88 @@ public class MinimumHeap<T> {
         this.table.put(tmp, i_o2);
     }
 
-    public void add(T element) {
-        // if (element == null)
-        // throw MinimumHeapException();
+    /**
+     * Add an {@code element} of {@code generic type} into the {@code MinimumHeap}
+     * 
+     * @param element to add
+     * @throws MinimumHeapException when:
+     *                              <ul>
+     *                              <li>{@code element} is {@code null}</li>
+     *                              <li>{@code element} is already into the
+     *                              {@code MinimumHeap}</li>
+     *                              </ul>
+     */
+    public void add(T element) throws MinimumHeapException {
+        if (element == null)
+            throw new MinimumHeapException("\nadd(element): element must be != null");
 
-        System.out.println("Added: " + element);
-
-        int pos = this.array.size();
         this.array.add(element);
-        this.table.put(element, this.table.size());
 
-        System.out.println(array);
-        // if (this.table.putIfAbsent(element, pos) != null)
-        // throw MinimumHeapException("");
+        if (this.table.putIfAbsent(element, this.table.size()) != null)
+            throw new MinimumHeapException("\nadd(element): element is already in the MinimumHeap");
 
-        while (this.table.get(element) >= 0 && (this.comparator).compare(element, parent(element)) < 0) {
-            System.err.println(array);
-            System.out.println(table);
-            System.out.println("Element: " + element + " Parent: " + parent(element));
+        while ((this.comparator).compare(element, parent(element)) < 0)
             swap(element, parent(element));
-            // element = parent(element);
-            System.out.println("Element: " + element + " Parent: " + parent(element));
-        }
-        System.out.println(array + "\n");
     }
 
-    private T min(T o1, T o2) {
+    /**
+     * @param o1 an element of the {@code MinimumHeap}
+     * @param o2 an element of the {@code MinimumHeap}
+     * @throws MinimumHeapException when {@code o1} or {@code o2} are {@code null}
+     */
+    private T min(T o1, T o2) throws MinimumHeapException {
+        if (o1 == null)
+            throw new MinimumHeapException("\nmin(o1, o2): o1 must be != null");
+
+        if (o2 == null)
+            throw new MinimumHeapException("\nmin(o1, o2): o2 must be != null");
+
         return (((this.comparator).compare(o1, o2) < 0) ? o1 : o2);
     }
 
-    private void heapify(T element) {
+    /**
+     * Makes the {@code MinimumHeap} the tree with root element the {@code element}
+     * 
+     * @param element where to start {@code heapify}
+     * @throws MinimumHeapException when {@code element} is {@code null}
+     * @see #min(T, T)
+     * @see #swap(T, T)
+     */
+    private void heapify(T element) throws MinimumHeapException {
+        if (element == null)
+            throw new MinimumHeapException("\nheapify(element): element must be != null");
+
         T m = min(element, min(left(element), right(element)));
+
         if ((this.comparator).compare(element, m) != 0) {
             swap(m, element);
-            heapify(m);
+
+            heapify(element);
         }
     }
 
+    /**
+     * @return the root element in the {@code MinimumHeap}
+     */
     private T root() {
         return this.array.get(0);
     }
 
+    /**
+     * @return the last element in the {@code MinimumHeap}
+     */
     private T last() {
         return this.array.get(this.array.size() - 1);
     }
 
-    public void remove() {
-        // if (this.array.isEmpty())
-        // throw MinimumHeapException("");
+    /**
+     * Remove the root element, then rebuild the {@code MinimumHeap}
+     * 
+     * @throws MinimumHeapException an empty {@code MinimumHeap}
+     */
+    public void remove() throws MinimumHeapException {
+        if (this.array.isEmpty())
+            throw new MinimumHeapException("\nremove(): cannot remove the root element of an empty MinimumHeap");
 
         swap(root(), last());
         this.table.remove(last());
@@ -126,46 +208,58 @@ public class MinimumHeap<T> {
             heapify(root());
     }
 
-    public void decreaseHeap(T element, T newElement) throws MinimumHeapException {
-        // if (element == null)
-        // throw MinimumHeapException("");
+    /**
+     * Change the given {@code element} with the given {@code newElement}
+     * 
+     * @param element    to change
+     * @param newElement to change with
+     * @throws MinimumHeapException when:
+     *                              <ul>
+     *                              <li>{@code element} is {@code null}</li>
+     *                              <li>{@code newElement} is {@code null}</li>
+     *                              <li>{@code element} is NOT into the
+     *                              {@code MinimumHeap}</li>
+     *                              </ul>
+     */
+    public void decrease(T element, T newElement) throws MinimumHeapException {
+        if (element == null)
+            throw new MinimumHeapException("\ndecrease(element, newElement): element must be != null");
 
-        // if (newElement == null)
-        // throw MinimumHeapException("");
+        if (newElement == null)
+            throw new MinimumHeapException("\ndecrease(element, newElement): newElement must be != null");
 
-        // if (!this.table.containsKey(element))
-        // throw MinimumHeapException("");
+        if (!this.table.containsKey(element))
+            throw new MinimumHeapException(
+                    "\ndecrease(element, newElement): cannot decrease an element that is not in the MinimumHeap");
 
         Integer pos = this.table.get(element);
         this.table.put(newElement, pos);
-        // this.h.set(i, x);
-        this.array.set(pos, element);
+        this.array.set(pos, newElement);
 
         // move the decremented element towards the root by checking if now is less than
         // the parent, if so swap the element with his parent, than repeat until end
-        while ((this.comparator).compare(element, parent(element)) < 0) {
-
-            swap(element, parent(element));
-            // System.out.println(toString());
-            element = parent(element);
-        }
+        while ((this.comparator).compare(newElement, parent(newElement)) < 0)
+            swap(newElement, parent(newElement));
 
         // if the element cannot go towards the root anymore, check if it can go down
-        if ((this.comparator).compare(element, parent(element)) >= 0) {
-            heapify(element);
-        }
+        if ((this.comparator).compare(newElement, parent(newElement)) >= 0)
+            heapify(newElement);
     }
 
     @Override
     public String toString() {
         return this.array.toString();
     }
+
+    /**
+     * @return the {@code MinimumHeap} as an array of {@code Object}
+     */
+    public Object[] toArray() {
+        return array.toArray();
+    }
 }
 
 // public class MinimumHeap<T> {
-
-// private String RED = "\033[1;31m";
-// private String NC = "\033[0m";
 
 // private ArrayList<T> h = null;
 // private Comparator<? super T> comparator = null;
@@ -292,14 +386,14 @@ public class MinimumHeap<T> {
 // * Insert an element into the {@code Minimum Heap}
 // *
 // * @param el element to insert
-// * @throws NullPointerException when the element is {@code null}
+// * @throws IllegalArgumentException when the element is {@code null}
 // * @throws IndexOutOfBoundsException on fail
 // * @see #parent(int)
 // */
-// public void insertHeap(T el) throws NullPointerException,
+// public void insertHeap(T el) throws IllegalArgumentException,
 // IndexOutOfBoundsException {
 // if (el == null)
-// throw new NullPointerException(
+// throw new IllegalArgumentException(
 // RED + "\n\tinsertHeap(element):\n" + NC +
 // "\t\t'element' must be not NULL");
 
@@ -360,10 +454,10 @@ public class MinimumHeap<T> {
 // * @param howMuch value to know how much to decrease the element at index
 // * {@code i}.
 // * @throws IndexOutOfBoundsException when the index {@code i} is out of size
-// * @throws NullPointerException when {@code howMuch} is {@code null}
+// * @throws IllegalArgumentException when {@code howMuch} is {@code null}
 // */
-// public void decreaseHeap(int i, T howMuch) throws IndexOutOfBoundsException,
-// NullPointerException {
+// public void decrease(int i, T howMuch) throws IndexOutOfBoundsException,
+// IllegalArgumentException {
 // if (i < 1 || i >= this.h.size())
 // throw new IndexOutOfBoundsException(
 // RED + "\n\tdecrease(index, howMuch)\n" + NC +
@@ -371,7 +465,7 @@ public class MinimumHeap<T> {
 // "\t\t'index' given: " + i + "");
 
 // if (howMuch == null)
-// throw new NullPointerException(
+// throw new IllegalArgumentException(
 // RED + "\n\tdecrease(index, howMuch, op)\n" + NC +
 // "\t\t'howMuch' must be != null");
 
