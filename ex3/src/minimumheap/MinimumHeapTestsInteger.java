@@ -1,4 +1,5 @@
-import java.util.ArrayList;
+package minimumheap;
+
 import java.util.Comparator;
 
 import static org.junit.Assert.*;
@@ -19,7 +20,6 @@ public class MinimumHeapTestsInteger {
 
     @Before
     public void createMinimumHeap() throws MinimumHeapException {
-        // sentinel = Integer.MIN_VALUE;
         i1 = 1;
         i2 = 2;
         i3 = 3;
