@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define MAX_HEIGHT 10
+#define MAX_HEIGHT 5
 
 typedef struct _SkipList SkipList;
 typedef struct _Node Node;

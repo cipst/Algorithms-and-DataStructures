@@ -42,6 +42,7 @@ void load_dictionary(SkipList* list, const char* file_name) {
 
     printf("\nLoading Dictionary...\n");
 
+    clock_t t = clock();
     // int count = 0;
     while (fgets(buffer, buf_size, fp) != NULL) {
         string = malloc((strlen(buffer)) * sizeof(char));
@@ -54,10 +55,12 @@ void load_dictionary(SkipList* list, const char* file_name) {
         insertSkpiList(list, string);
         // count++;
     }
+    t = clock() - t;
+
+    printf("\nDictionary Loaded Successfully!\n");
+    printf("Execution time: %f s!\n", (((float)t) / CLOCKS_PER_SEC));
 
     fclose(fp);
-    printf("\nDictionary Loaded Successfully!\n");
-    fflush(stdout);
 }
 
 void check_correctme(SkipList* list, const char* file_name) {
@@ -72,8 +75,8 @@ void check_correctme(SkipList* list, const char* file_name) {
     }
 
     printf("\nWords to correct:\n");
-    fflush(stdout);
 
+    clock_t t = clock();
     while ((c = (char)fgetc(fp)) != EOF) {
         if (IS_LETTER(c)) {
             c = (char)tolower(c);
@@ -81,7 +84,6 @@ void check_correctme(SkipList* list, const char* file_name) {
         } else if (c == ' ') {
             if (searchSkipList(list, string) == -1) {
                 printf("%s\n", string);
-                fflush(stdout);
             }
             strcpy(string, "");
         }
@@ -89,9 +91,11 @@ void check_correctme(SkipList* list, const char* file_name) {
 
     if (searchSkipList(list, string) == -1) {
         printf("%s\n", string);
-        fflush(stdout);
     }
     strcpy(string, "");
+
+    t = clock() - t;
+    printf("Execution time: %f s!\n", (((float)t) / CLOCKS_PER_SEC));
 
     fclose(fp);
 }
@@ -117,6 +121,8 @@ int main(int argc, char** argv) {
         fprintf(stderr, "Usage: ./main_ex2 <dictionary.txt> <correctme.txt>\n");
         exit(EXIT_FAILURE);
     }
+
+    printf("\nMAX_HEIGHT: %d\n", MAX_HEIGHT);
 
     test_SkipList(argv[1], argv[2]);
 

@@ -78,25 +78,25 @@ void insertSkpiList(SkipList* list, void* item) {
 int searchSkipList(SkipList* list, void* item) {
     Node* x = list->head;
 
-    int level = list->max_level - 1;
+    // int level = list->max_level - 1;
     // Find the position where the item is expected
-    while (x != NULL && level >= 0) {
-        if (x->next[level] == NULL) {
-            --level;
-        } else {
-            int cmp = list->compare(x->next[level]->item, item);
+    // while (x != NULL && level >= 0) {
+    //     if (x->next[level] == NULL) {
+    //         --level;
+    //     } else {
+    //         int cmp = list->compare(x->next[level]->item, item);
 
-            if (cmp == 0) {  // Found a match
-                return 1;
-            } else if (cmp > 0) {  // Drop down a level
-                --level;
-            } else {  // Keep going at this level
-                x = x->next[level];
-            }
-        }
-    }
-    // Didn't find it
-    return -1;
+    //         if (cmp == 0) {  // Found a match
+    //             return 1;
+    //         } else if (cmp > 0) {  // Drop down a level
+    //             --level;
+    //         } else {  // Keep going at this level
+    //             x = x->next[level];
+    //         }
+    //     }
+    // }
+    // // Didn't find it
+    // return -1;
 
     //-------------
 
@@ -114,18 +114,18 @@ int searchSkipList(SkipList* list, void* item) {
     //-------------
 
     // loop invariant: x->item < I
-    // for (int i = list->max_level - 1; i >= 0; --i) {
-    //     while (x->next[i] != NULL && list->compare(x->next[i]->item, item) < 0) {
-    //         x = x->next[i];
-    //     }
-    // }
+    for (int i = list->max_level - 1; i >= 0; --i) {
+        while (x->next[i] != NULL && list->compare(x->next[i]->item, item) < 0) {
+            x = x->next[i];
+        }
+    }
 
-    // // x->item < I <= x->next[1]->item
-    // x = x->next[1];
-    // if (x->item != NULL && (list->compare(x->item, item) == 0))
-    //     return 1;
-    // else
-    //     return -1;
+    // x->item < I <= x->next[1]->item
+    x = x->next[0];
+    if (x->item != NULL && (list->compare(x->item, item) == 0))
+        return 1;
+    else
+        return -1;
 }
 
 void freeNode(Node* n) {
