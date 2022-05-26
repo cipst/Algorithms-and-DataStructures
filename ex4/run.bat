@@ -30,20 +30,21 @@ if %arg%==--help goto :help
 :run
 cd ./src
 echo %MAGENTA%Compiling...%NC%
-@REM javac -d "../classes" minimumheap/MinimumHeap.java
-@REM javac -d "../classes" -cp "%CLASSPATH%" minimumheap/*.java
+javac -d "../classes" graph/Vertex.java
+javac -d "../classes" graph/Graph.java
+javac -d "../classes" -cp "%CLASSPATH%" graph/*.java
 echo %GREEN%Done%NC%&echo\
 
 cd ../classes
 echo %MAGENTA%Running tests...%NC%
-@REM java -cp "%CLASSPATH%" minimumheap/MinimumHeapTestsRunner
+java -cp "%CLASSPATH%" graph/GraphTestsRunner
 echo %GREEN%Done%NC%
 cd ..
 goto :end
 
 @REM CLEAR
 :clear
-@REM rmdir /s /q "classes/minimumheap"
+rmdir /s /q "classes/graph"
 echo "%RED%classes/%NC%" cleared successfully
 goto :end
 
