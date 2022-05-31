@@ -18,6 +18,10 @@ SET arg=%1
 @REM check if argument is empty, if so go to :run
 if [%arg%]==[] goto :run
 
+@REM check if argument is -g OR --graph, is so go to :graph
+if %arg%==-g goto :graph
+if %arg%==--graph goto :graph
+
 @REM check if argument is -c OR --clear, if so go to :clear
 if %arg%==-c goto :clear
 if %arg%==--clear goto :clear
@@ -28,6 +32,24 @@ if %arg%==--help goto :help
 
 @REM COMPILE AND LAUNCH
 :run
+cd ./src
+echo %MAGENTA%Importing graph classes from graph/%NC%
+javac -d ../classes/ graph/Graph.java graph/UndirectedGraph.java graph/Vertex.java
+echo %GREEN%Done%NC%&echo\
+
+echo %MAGENTA%Importing classpath of MinimumHeap and compiling dijkstra package.%NC%
+javac -d ../classes/ -cp ".:graph:../../ex3/src" dijkstra/*.java
+echo %GREEN%Done%NC%&echo\
+
+cd ../classes
+echo %MAGENTA%Running Main...%NC%
+java dijkstra/Main "../../Resources/Datasets/"
+echo %GREEN%Done%NC%
+cd ..
+goto :end
+
+@REM COMPILE AND LAUNCH GRAPH TESTS
+:graph
 cd ./src
 echo %MAGENTA%Compiling...%NC%
 javac -d "../classes" graph/Vertex.java
@@ -52,7 +74,7 @@ goto :end
 :help
 echo &echo\?? %BOLD%HELP%NC% ??
 echo    Use option -c or --clear to clear the %RED%classes/%NC% folder
-echo    Use %BOLD%"run.bat"%NC% to compile and launch %BOLD%.........%NC%&echo\
+echo    Use %BOLD%"run.bat"%NC% to compile and launch %BOLD%graph/GraphTestsRunner%NC%&echo\
 
 @REM END
 :end

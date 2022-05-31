@@ -7,6 +7,7 @@ import java.util.Set;
 
 public class Graph<T, S> {
     private Hashtable<T, Vertex<T, S>> vertices = null;
+
     private GraphType type = GraphType.DIRECTED;
 
     /**
@@ -14,6 +15,7 @@ public class Graph<T, S> {
      */
     public Graph() {
         this.vertices = new Hashtable<>();
+        // this.edges = new ArrayList<>();
     }
 
     /**
@@ -24,6 +26,7 @@ public class Graph<T, S> {
      */
     public Graph(GraphType type) {
         this.vertices = new Hashtable<>();
+        // this.edges = new ArrayList<>();
         this.type = type;
     }
 
@@ -49,6 +52,16 @@ public class Graph<T, S> {
         return this.vertices.size();
     }
 
+    public int getNumberEdges() {
+        int sum = 0;
+
+        for (T a : vertices.keySet()) {
+            sum += vertices.get(a).getOutDegree();
+        }
+
+        return (isDirected() ? sum : sum / 2);
+    }
+
     /**
      * Add a {@code Vertex} with the given {@code label} into the {@code Graph}
      * 
@@ -61,7 +74,7 @@ public class Graph<T, S> {
         if (vertexLabel == null)
             throw new NullPointerException();
 
-        Vertex<T, S> newVertex = new Vertex<>(vertexLabel);
+        Vertex<T, S> newVertex = new Vertex<>();
 
         return (vertices.putIfAbsent(vertexLabel, newVertex) == null);
     }
@@ -74,11 +87,21 @@ public class Graph<T, S> {
      *         {@code FALSE} otherwise
      * @throws NullPointerException iff {@code vertexLabel} is {@code null}
      */
-    public boolean contains(T vertexLabel) throws NullPointerException {
+    public boolean containsVertex(T vertexLabel) throws NullPointerException {
         if (vertexLabel == null)
             throw new NullPointerException();
 
         return vertices.containsKey(vertexLabel);
+    }
+
+    public boolean containsEdge(T vertexA, T vertexB) throws NullPointerException {
+        if (vertexA == null || vertexB == null)
+            throw new NullPointerException();
+
+        Vertex<T, S> firstVertex = vertices.get(vertexA);
+        Vertex<T, S> secondVertex = vertices.get(vertexB);
+
+        return firstVertex.hasAdjacent(vertexB) || secondVertex.hasAdjacent(vertexB);
     }
 
     /**
@@ -95,6 +118,18 @@ public class Graph<T, S> {
         return verts;
     }
 
+    public Set<S> getEdges() {
+        Set<S> ris = new HashSet<>();
+
+        for (T a : vertices.keySet()) {
+            for (S b : vertices.get(a).getEdgeLabels()) {
+                ris.add(b);
+            }
+        }
+
+        return ris;
+    }
+
     /**
      * @param vertexLabel to remove
      * @return {@code TRUE} iff removed successfully, {@code FALSE} otherwise
@@ -104,16 +139,16 @@ public class Graph<T, S> {
         if (vertexLabel == null)
             throw new NullPointerException();
 
-        Vertex<T, S> ris = vertices.remove(vertexLabel);
+        // Vertex<T, S> ris = vertices.remove(vertexLabel);
 
-        if (ris == null)
+        if (vertices.remove(vertexLabel) == null)
             return false;
 
         Set<T> all = this.getVertices();
 
         for (T a : all) {
             Vertex<T, S> curr = this.vertices.get(a);
-            if (curr.hasEdge(vertexLabel)) {
+            if (curr.hasAdjacent(vertexLabel)) {
                 curr.removeEdge(vertexLabel);
             }
         }
@@ -123,7 +158,8 @@ public class Graph<T, S> {
 
     /**
      * @param vertexLabel vertex whose adjacents you want to know
-     * @return a {@link Set} of adjacents of the given {@code vertexLabel}
+     * @return a {@link Set} of adjacents of the given {@code vertexLabel},
+     *         {@code null} otherwise
      * @throws NullPointerException iff {@code vertexLabel} is {@code null}
      */
     public Set<T> getAdjacentVertices(T vertexLabel) throws NullPointerException {
@@ -131,7 +167,7 @@ public class Graph<T, S> {
             throw new NullPointerException();
 
         if (!vertices.contains(vertexLabel))
-            return new HashSet<>();
+            return null;
 
         Vertex<T, S> vertex = vertices.get(vertexLabel);
 
@@ -156,7 +192,7 @@ public class Graph<T, S> {
 
         int outdegree = vertex.getOutDegree();
 
-        if (this.type == GraphType.UNDIRECTED)
+        if (!isDirected())
             return outdegree;
 
         int indegree = 0;
@@ -164,7 +200,7 @@ public class Graph<T, S> {
         Enumeration<Vertex<T, S>> enumerationVertices = vertices.elements();
         while (enumerationVertices.hasMoreElements()) {
             vertex = enumerationVertices.nextElement();
-            if (vertex.hasEdge(vertexLabel))
+            if (vertex.hasAdjacent(vertexLabel))
                 indegree++;
         }
 
@@ -174,25 +210,30 @@ public class Graph<T, S> {
     /**
      * Check if the two vertices are adjacents
      * 
-     * @param vertexA
-     * @param vertexB
+     * @param vertexFrom
+     * @param vertexTo
      * @return {@code TRUE} iff the two vertices are adjacents, {@code FALSE}
      *         otherwise
      * @throws NullPointerException iff {@code vertexA} OR {@code vertexB} are
      *                              {@code null}
      */
-    public boolean areAdjacents(T vertexA, T vertexB) throws NullPointerException {
-        if (vertexA == null || vertexB == null)
+    public boolean areAdjacents(T vertexFrom, T vertexTo) throws NullPointerException {
+        if (vertexFrom == null || vertexTo == null)
             throw new NullPointerException();
 
-        Vertex<T, S> firstVertex = vertices.get(vertexA);
+        Vertex<T, S> firstVertex = vertices.get(vertexFrom);
 
-        if (this.type == GraphType.UNDIRECTED)
-            return firstVertex.hasEdge(vertexB);
+        // if (this.type == GraphType.UNDIRECTED)
+        return firstVertex.hasAdjacent(vertexTo);
 
-        Vertex<T, S> secondVertex = vertices.get(vertexB);
+        // Vertex<T, S> secondVertex = vertices.get(vertexB);
 
-        return (firstVertex.hasEdge(vertexB) || secondVertex.hasEdge(vertexA));
+        // return (firstVertex.hasAdjacent(vertexB) &&
+        // secondVertex.hasAdjacent(vertexA));
+    }
+
+    public boolean areCompleteAdjacents(T vertexA, T vertexB) {
+        return this.areAdjacents(vertexA, vertexB) && this.areAdjacents(vertexB, vertexA);
     }
 
     /**
@@ -234,7 +275,7 @@ public class Graph<T, S> {
         if (!firstVertex.addAdjacent(vertexB, label))
             return false;
 
-        if (this.type == GraphType.UNDIRECTED) {
+        if (!isDirected()) {
             Vertex<T, S> secondVertex = vertices.get(vertexB);
 
             if (!secondVertex.addAdjacent(vertexA, label))
@@ -265,7 +306,7 @@ public class Graph<T, S> {
         if (firstVertex.removeEdge(vertexB) == null)
             return false;
 
-        if (this.type == GraphType.UNDIRECTED) {
+        if (!isDirected()) {
             Vertex<T, S> secondVertex = vertices.get(vertexB);
 
             if (secondVertex.removeEdge(vertexA) == null)

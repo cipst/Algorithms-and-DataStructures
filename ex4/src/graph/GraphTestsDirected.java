@@ -82,12 +82,12 @@ public class GraphTestsDirected {
     @Test
     public void testContains_True() {
         graph.addVertex(lb1);
-        assertTrue(graph.contains(lb1));
+        assertTrue(graph.containsVertex(lb1));
     }
 
     @Test
     public void testContains_False() {
-        assertFalse(graph.contains(lb1));
+        assertFalse(graph.containsVertex(lb1));
     }
 
     @Test
@@ -138,16 +138,13 @@ public class GraphTestsDirected {
 
     @Test
     public void testGetAdjacentVertices_Empty() {
-        assertThat(graph.getAdjacentVertices(lb1), is(new HashSet<>()));
+        assertNull(graph.getAdjacentVertices(lb1));
     }
 
     @Test
-    public void testGetAdjacentVertices_OneVertex() {
+    public void testAddEdge_False() {
         graph.addVertex(lb1);
-        graph.addEdge(lb1, lb2, c1);
-        Set<Integer> exp = new HashSet<>();
-        exp.add(lb2);
-        assertThat(graph.getAdjacentVertices(lb1), is(exp));
+        assertFalse(graph.addEdge(lb1, lb2, c1));
     }
 
     // @Test

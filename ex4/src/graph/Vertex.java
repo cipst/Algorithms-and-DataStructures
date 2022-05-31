@@ -5,29 +5,23 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Set;
 
-class Vertex<T, S> {
-    private T label = null;
+public class Vertex<T, S> {
     private Hashtable<T, S> adjacentList = null;
+    private double value = 0;
 
     /**
-     * Create a new {@code Vertex} with the given {@code label}
-     * 
-     * @param label name of the new {@code Vertex}
-     * @throws NullPointerException iff {@code label} is {@code null}
+     * Create a new {@code Vertex}
      */
-    public Vertex(T label) throws NullPointerException {
-        if (label == null)
-            throw new NullPointerException();
-
-        this.label = label;
+    public Vertex() {
         this.adjacentList = new Hashtable<>();
     }
 
-    /**
-     * @return the {@code label} of the {@code Vertex}
-     */
-    public T getVertexLabel() {
-        return label;
+    public void setValue(double value) {
+        this.value = value;
+    }
+
+    public double getValue() {
+        return this.value;
     }
 
     /**
@@ -74,11 +68,18 @@ class Vertex<T, S> {
      *         {@code Vertex}, {@code FALSE} otherwise
      * @throws NullPointerException iff {@code vertexLabel} is {@code null}
      */
-    public boolean hasEdge(T vertexLabel) throws NullPointerException {
+    public boolean hasAdjacent(T vertexLabel) throws NullPointerException {
         if (vertexLabel == null)
             throw new NullPointerException();
 
         return adjacentList.containsKey(vertexLabel);
+    }
+
+    public boolean hasEdge(S edgeLabel) throws NullPointerException {
+        if (edgeLabel == null)
+            throw new NullPointerException();
+
+        return adjacentList.contains(edgeLabel);
     }
 
     /**
