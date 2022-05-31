@@ -1,4 +1,5 @@
 package minimumheap;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Hashtable;
@@ -197,16 +198,18 @@ public class MinimumHeap<T> {
      * 
      * @throws MinimumHeapException on an empty {@code MinimumHeap}
      */
-    public void remove() throws MinimumHeapException {
+    public T remove() throws MinimumHeapException {
         if (this.array.isEmpty())
             throw new MinimumHeapException("\nremove(): cannot remove the root element of an empty MinimumHeap");
 
         swap(root(), last());
         this.table.remove(last());
-        this.array.remove(this.array.size() - 1);
+        T removed = this.array.remove(this.array.size() - 1);
 
         if (this.array.size() > 1)
             heapify(root());
+
+        return removed;
     }
 
     /**
@@ -234,6 +237,7 @@ public class MinimumHeap<T> {
                     "\ndecrease(element, newElement): cannot decrease an element that is not in the MinimumHeap");
 
         Integer pos = this.table.get(element);
+        this.table.remove(element);
         this.table.put(newElement, pos);
         this.array.set(pos, newElement);
 
