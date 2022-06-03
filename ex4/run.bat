@@ -34,16 +34,20 @@ if %arg%==--help goto :help
 :run
 cd ./src
 echo %MAGENTA%Importing graph classes from graph/%NC%
-javac -d ../classes/ graph/Graph.java graph/UndirectedGraph.java graph/Vertex.java
+javac -d ../classes/ graph/Graph.java graph/Vertex.java graph/Edge.java 
 echo %GREEN%Done%NC%&echo\
 
-echo %MAGENTA%Importing classpath of MinimumHeap and compiling dijkstra package.%NC%
-javac -d ../classes/ -cp ".:graph:../../ex3/src" dijkstra/*.java
+echo %MAGENTA%Importing classpath of minimumheap and compiling dijkstra package.%NC%
+javac -d ../classes/ -cp ".;graph;../../ex3/src" dijkstra/*.java
+echo %GREEN%Done%NC%&echo\
+
+echo %MAGENTA%Compiling usage/%NC%
+javac -d ../classes/ -cp ".;graph;dijkstra;../../ex3/src" usage/*.java
 echo %GREEN%Done%NC%&echo\
 
 cd ../classes
 echo %MAGENTA%Running Main...%NC%
-java dijkstra/Main "../../Resources/Datasets/"
+java usage/Main "../../Resources/Datasets/italian_dist_graph.csv"
 echo %GREEN%Done%NC%
 cd ..
 goto :end
@@ -67,6 +71,9 @@ goto :end
 @REM CLEAR
 :clear
 rmdir /s /q "classes/graph"
+rmdir /s /q "classes/minimumheap"
+rmdir /s /q "classes/dijkstra"
+rmdir /s /q "classes/usage"
 echo "%RED%classes/%NC%" cleared successfully
 goto :end
 

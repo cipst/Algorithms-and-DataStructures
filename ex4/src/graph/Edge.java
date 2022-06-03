@@ -3,21 +3,26 @@ package graph;
 public class Edge<S> {
 
     private S label = null;
-    private Number value = 0;
+    private double weight = 0;
 
     public Edge(S label) {
         this.label = label;
     }
 
-    public void setValue(Number value) {
-        this.value = value;
+    public void setWeight(double weight) {
+        this.weight = weight;
     }
 
-    public Number getValue() {
-        return this.value;
+    public double getWeight() {
+        return this.weight;
     }
 
     public S getLabel() {
         return this.label;
+    }
+
+    @Override
+    public String toString() {
+        return "" + this.weight;
     }
 }

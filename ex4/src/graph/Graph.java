@@ -4,6 +4,7 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Set;
+import java.util.Map.Entry;
 
 public class Graph<T, S> {
     private Hashtable<T, Vertex<T, S>> vertices = null;
@@ -74,9 +75,13 @@ public class Graph<T, S> {
         if (vertexLabel == null)
             throw new NullPointerException();
 
-        Vertex<T, S> newVertex = new Vertex<>();
+        Vertex<T, S> newVertex = new Vertex<>(vertexLabel);
 
         return (vertices.putIfAbsent(vertexLabel, newVertex) == null);
+    }
+
+    public Vertex<T, S> getVertex(T vertexLabel) {
+        return vertices.get(vertexLabel);
     }
 
     /**
@@ -118,11 +123,20 @@ public class Graph<T, S> {
         return verts;
     }
 
-    public Set<S> getEdges() {
-        Set<S> ris = new HashSet<>();
+    public Set<Vertex<T, S>> getVerticesObj() {
+        Set<Vertex<T, S>> v = new HashSet<>();
+        Enumeration<Vertex<T, S>> e = vertices.elements();
+        while (e.hasMoreElements()) {
+            v.add(e.nextElement());
+        }
+        return v;
+    }
+
+    public Set<Edge<S>> getEdges() {
+        Set<Edge<S>> ris = new HashSet<>();
 
         for (T a : vertices.keySet()) {
-            for (S b : vertices.get(a).getEdgeLabels()) {
+            for (Edge<S> b : vertices.get(a).getEdgeLabels()) {
                 ris.add(b);
             }
         }
@@ -172,6 +186,22 @@ public class Graph<T, S> {
         Vertex<T, S> vertex = vertices.get(vertexLabel);
 
         return vertex.getAdjacentVertices();
+    }
+
+    public Set<Vertex<T, S>> getAdjacentVerticesObj(Vertex<T, S> vertex) throws NullPointerException {
+        if (vertex == null)
+            throw new NullPointerException();
+
+        if (!vertices.containsValue(vertex))
+            return null;
+
+        Set<T> adj = vertex.getAdjacentVertices();
+
+        Set<Vertex<T, S>> ris = new HashSet<>();
+        for (T a : adj) {
+            ris.add(vertices.get(a));
+        }
+        return ris;
     }
 
     /**
@@ -244,13 +274,13 @@ public class Graph<T, S> {
      * @throws NullPointerException iff {@code vertexFrom} OR {@code vertexTo} are
      *                              {@code null}
      */
-    public S getEdge(T vertexFrom, T vertexTo) throws NullPointerException {
+    public Edge<S> getEdge(T vertexFrom, T vertexTo) throws NullPointerException {
         if (vertexFrom == null || vertexTo == null)
             throw new NullPointerException();
 
         Vertex<T, S> vertex = vertices.get(vertexFrom);
 
-        return vertex.getEdgeLabel(vertexTo);
+        return vertex.getEdge(vertexTo);
     }
 
     /**
@@ -271,14 +301,15 @@ public class Graph<T, S> {
             return false;
 
         Vertex<T, S> firstVertex = vertices.get(vertexA);
+        Edge<S> edge = new Edge<>(label);
 
-        if (!firstVertex.addAdjacent(vertexB, label))
+        if (!firstVertex.addAdjacent(vertexB, edge))
             return false;
 
         if (!isDirected()) {
             Vertex<T, S> secondVertex = vertices.get(vertexB);
 
-            if (!secondVertex.addAdjacent(vertexA, label))
+            if (!secondVertex.addAdjacent(vertexA, edge))
                 return false;
         }
 
@@ -318,6 +349,11 @@ public class Graph<T, S> {
 
     @Override
     public String toString() {
-        return vertices.toString();
+        String s = "{\n";
+        for (Entry<T, Vertex<T, S>> e : vertices.entrySet()) {
+            s += "  " + e.getKey() + ": " + e.getValue().adjacentsToString() + "\n";
+        }
+        s += "}";
+        return s;
     }
 }
