@@ -91,17 +91,17 @@ public class GraphTestsDirected {
     }
 
     @Test
-    public void testGetVertices_Empty() {
-        Set<Integer> ris = graph.getVertices();
+    public void testGetVerticesLabel_Empty() {
+        Set<Integer> ris = graph.getVerticesLabel();
         assertThat(ris, is(new HashSet<>()));
     }
 
     @Test
-    public void testGetVertices_OneVertex() {
+    public void testGetVerticesLabel_OneVertex() {
         graph.addVertex(lb1);
         Set<Integer> exp = new HashSet<>();
         exp.add(lb1);
-        assertThat(graph.getVertices(), is(exp));
+        assertThat(graph.getVerticesLabel(), is(exp));
     }
 
     @Test
@@ -111,7 +111,7 @@ public class GraphTestsDirected {
         Set<Integer> exp = new HashSet<>();
         exp.add(lb1);
         exp.add(lb2);
-        assertThat(graph.getVertices(), is(exp));
+        assertThat(graph.getVerticesLabel(), is(exp));
     }
 
     @Test(expected = NullPointerException.class)
@@ -119,16 +119,15 @@ public class GraphTestsDirected {
         graph.removeVertex(null);
     }
 
-    @Test
-    public void testRemoveVertex_True() {
-        graph.addVertex(lb1);
-        assertTrue(graph.removeVertex(lb1));
+    @Test(expected = GraphException.class)
+    public void testRemoveVertex_NotInGraph() {
+        graph.removeVertex(lb1);
     }
 
     @Test
-    public void testRemoveVertex_False() {
+    public void testRemoveVertex_True() {
         graph.addVertex(lb1);
-        assertFalse(graph.removeVertex(lb2));
+        assertThat(graph.removeVertex(lb1), is(new Vertex<>(lb1)));
     }
 
     @Test(expected = NullPointerException.class)

@@ -12,7 +12,7 @@ public class Vertex<T, S> {
     private Vertex<T, S> pi = null;
 
     /**
-     * Create a new {@code Vertex}
+     * Create a new {@code Vertex} with the given {@code label}
      */
     public Vertex(T label) {
         this.adjacentList = new Hashtable<>();
@@ -31,10 +31,18 @@ public class Vertex<T, S> {
         return this.distance;
     }
 
+    /**
+     * Set the parent {@code Vertex}
+     * 
+     * @param pi parent {@code Vertex}
+     */
     public void setPi(Vertex<T, S> pi) {
         this.pi = pi;
     }
 
+    /**
+     * @return the parent {@code Vertex}
+     */
     public Vertex<T, S> getPi() {
         return pi;
     }
@@ -47,10 +55,10 @@ public class Vertex<T, S> {
     }
 
     /**
-     * @return a new {@link Set} of type {@code T} containing all the vertices
+     * @return a new {@link Set} of vertex label containing all the vertices
      *         adjacents
      */
-    public Set<T> getAdjacentVertices() {
+    public Set<T> getAdjacentVerticesLabel() {
         Set<T> adjacent = new HashSet<>();
 
         for (T a : adjacentList.keySet()) {
@@ -60,9 +68,9 @@ public class Vertex<T, S> {
     }
 
     /**
-     * @return a new {@link Set} of type {@code Edge<S>} containing all the edges
+     * @return a new {@link Set} of {@link Edge} containing all the edges
      */
-    public Set<Edge<S>> getEdgeLabels() {
+    public Set<Edge<S>> getEdges() {
         Set<Edge<S>> ris = new HashSet<>();
         Enumeration<Edge<S>> edge = adjacentList.elements();
 
@@ -90,6 +98,12 @@ public class Vertex<T, S> {
         return adjacentList.containsKey(vertexLabel);
     }
 
+    /**
+     * @param edge
+     * @return {@code TRUE} iff {@code edge} is an {@link Edge} of the current
+     *         {@code Vertex}, {@code FALSE} otherwise
+     * @throws NullPointerException iff {@code edge} is {@code null}
+     */
     public boolean hasEdge(Edge<S> edge) throws NullPointerException {
         if (edge == null)
             throw new NullPointerException();
@@ -98,48 +112,55 @@ public class Vertex<T, S> {
     }
 
     /**
-     * @param adjacent of the vertex adjacent
-     * @param label    of the edge
+     * @param adjacentLabel of the vertex adjacent
+     * @param edgeLabel     of the edge
      * @return {@code TRUE} iff added successfully, {@code FALSE} otherwise
-     * @throws NullPointerException iff {@code adjacent} OR {@code label} are
-     *                              {@code null}
+     * @throws NullPointerException iff {@code adjacentLabel} OR {@code edgeLabel}
+     *                              are {@code null}
      */
-    public boolean addAdjacent(T adjacent, Edge<S> label) throws NullPointerException {
-        if (adjacent == null || label == null)
+    public boolean addAdjacent(T adjacentLabel, S edgeLabel) throws NullPointerException {
+        if (adjacentLabel == null || edgeLabel == null)
             throw new NullPointerException();
 
-        return (adjacentList.putIfAbsent(adjacent, label) == null);
+        Edge<S> edge = new Edge<>(edgeLabel);
+
+        return (adjacentList.putIfAbsent(adjacentLabel, edge) == null);
     }
 
     /**
-     * @param adjacent
-     * @return the edge on success, {@code null} otherwise
-     * @throws NullPointerException iff {@code adjacent} is {@code null}
+     * @param adjacentLabel
+     * @return the {@code Edge} on success, {@code null} otherwise
+     * @throws NullPointerException iff {@code adjacentLabel} is {@code null}
+     * @see Edge
      */
-    // public Edge<S> getEdgeLabel(T adjacent) throws NullPointerException {
-    // if (adjacent == null)
-    // throw new NullPointerException();
-
-    // return adjacentList.get(adjacent);
-    // }
-
-    public Edge<S> getEdge(T adjacent) throws NullPointerException {
-        if (adjacent == null)
+    public Edge<S> getEdge(T adjacentLabel) throws NullPointerException {
+        if (adjacentLabel == null)
             throw new NullPointerException();
 
-        return adjacentList.get(adjacent);
+        return adjacentList.get(adjacentLabel);
     }
 
-    public double getEdgeWeight(T adjacent) throws NullPointerException {
-        if (adjacent == null)
+    /**
+     * Retrieve the {@code weight} of the {@code edge} with the adjacent vertex with
+     * the given {@code adjacentLabel}
+     * 
+     * @param adjacentLabel label of the {@code adjacent} vertex
+     * @return the {@code edge} {@code weight}
+     * @throws NullPointerException
+     *                              <ul>
+     *                              <li>if {@code adjacentLabel} is
+     *                              {@code null}</li>
+     *                              <li>if there is no {@code edge} between the
+     *                              vertex and his {@code adjacent}</li>
+     *                              </ul>
+     */
+    public double getEdgeWeight(T adjacentLabel) throws NullPointerException {
+        Edge<S> edge = getEdge(adjacentLabel);
+
+        if (edge == null)
             throw new NullPointerException();
 
-        Edge<S> edge = getEdge(adjacent);
-
-        if (edge != null)
-            return edge.getWeight();
-        else
-            return -1;
+        return edge.getWeight();
     }
 
     /**
@@ -153,21 +174,6 @@ public class Vertex<T, S> {
 
         return adjacentList.remove(adjacent);
     }
-
-    // /**
-    // * @param adjacent
-    // * @param newLabel
-    // * @return
-    // * @throws NullPointerException iff {@code adjacent} OR {@code newLabel} are
-    // * {@code null}
-    // */
-    // public S replaceEdgeLabel(T adjacent, S newLabel) throws NullPointerException
-    // {
-    // if (adjacent == null || newLabel == null)
-    // throw new NullPointerException();
-
-    // return adjacentList.replace(adjacent, newLabel);
-    // }
 
     /**
      * Remove all the adjacents vertices
