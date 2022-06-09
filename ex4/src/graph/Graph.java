@@ -68,13 +68,14 @@ public class Graph<T, S> {
      * {@code Graph}
      * 
      * @param vertexLabel
-     * @return {@code TRUE} iff added successfully, {@code FALSE} otherwise
+     * @return {@code TRUE} iff added successfully, {@code FALSE} if already exists
+     *         a vertex with the same {@code vertexLabel}
      * @throws NullPointerException iff {@code vertexLabel} is {@code null}
      * @see Vertex
      */
     public boolean addVertex(T vertexLabel) throws NullPointerException {
         if (vertexLabel == null)
-            throw new NullPointerException();
+            throw new NullPointerException("addVertex(vertexLabel): vertexLabel must not be null");
 
         Vertex<T, S> newVertex = new Vertex<>(vertexLabel);
 
@@ -83,10 +84,15 @@ public class Graph<T, S> {
 
     /**
      * @param vertexLabel
-     * @return the {@code Vertex} with the given {@code vertexLabel}
+     * @return the {@code Vertex} with the given {@code vertexLabel} on success,
+     *         {@code null} if there are no vertex with vertex {@code label}
+     * @throws NullPointerException iff {@code vertexLabel} is {@code null}
      * @see Vertex
      */
-    public Vertex<T, S> getVertex(T vertexLabel) {
+    public Vertex<T, S> getVertex(T vertexLabel) throws NullPointerException {
+        if (vertexLabel == null)
+            throw new NullPointerException("getVertex(vertexLabel): vertexLabel must not be null");
+
         return vertices.get(vertexLabel);
     }
 
@@ -100,7 +106,7 @@ public class Graph<T, S> {
      */
     public boolean containsVertex(T vertexLabel) throws NullPointerException {
         if (vertexLabel == null)
-            throw new NullPointerException();
+            throw new NullPointerException("containsVertex(vertexLabel): vertexLabel must not be null");
 
         return vertices.containsKey(vertexLabel);
     }
@@ -110,12 +116,21 @@ public class Graph<T, S> {
      * @param vertexB
      * @return {@code TRUE} iff there is an {@code edge} between {@code vertexA} and
      *         {@code vertexB}, {@code FALSE} otherwise
-     * @throws NullPointerException iff {@code vertexA} OR {@code vertexB} are
-     *                              {@code null}
+     * @throws NullPointerException
+     *                              <ul>
+     *                              <li>if {@code vertexA} is {@code null}</li>
+     *                              <li>if {@code vertexB} is {@code null}</li>
+     *                              <li>if there are no {@code Vertex} with
+     *                              {@code vertexA} label or {@code vertexB}
+     *                              label to search on</li>
+     *                              </ul>
      */
     public boolean containsEdge(T vertexA, T vertexB) throws NullPointerException {
-        if (vertexA == null || vertexB == null)
-            throw new NullPointerException();
+        if (vertexA == null)
+            throw new NullPointerException("containsEdge(vertexA, vertexB): vertexA must not be null");
+
+        if (vertexB == null)
+            throw new NullPointerException("containsEdge(vertexA, vertexB): vertexB must not be null");
 
         Vertex<T, S> firstVertex = vertices.get(vertexA);
         Vertex<T, S> secondVertex = vertices.get(vertexB);
@@ -143,12 +158,11 @@ public class Graph<T, S> {
      * @see Vertex
      */
     public Set<Vertex<T, S>> getVertices() {
-        Set<Vertex<T, S>> v = new HashSet<>();
-        Set<T> s = getVerticesLabel();
-        for (T x : s) {
-            v.add(getVertex(x));
+        Set<Vertex<T, S>> vertices = new HashSet<>();
+        for (T vLabel : getVerticesLabel()) {
+            vertices.add(getVertex(vLabel));
         }
-        return v;
+        return vertices;
     }
 
     /**
@@ -158,39 +172,36 @@ public class Graph<T, S> {
      * @see Edge
      */
     public Set<Edge<S>> getEdges() {
-        Set<Edge<S>> ris = new HashSet<>();
+        Set<Edge<S>> edges = new HashSet<>();
 
-        for (T a : vertices.keySet()) {
-            for (Edge<S> b : vertices.get(a).getEdges()) {
-                ris.add(b);
+        for (T vLabel : this.vertices.keySet()) {
+            for (Edge<S> b : getVertex(vLabel).getEdges()) {
+                edges.add(b);
             }
         }
 
-        return ris;
+        return edges;
     }
 
     /**
      * @param vertexLabel to remove
      * @return the {@code Vertex} removed with the given label
      * @throws NullPointerException iff {@code vertexLabel} is {@code null}
-     * @throws GraphException       iff {@code vertexLabel} is not in the
-     *                              {@code Graph}
      */
-    public Vertex<T, S> removeVertex(T vertexLabel) throws NullPointerException, GraphException {
+    public Vertex<T, S> removeVertex(T vertexLabel) throws NullPointerException {
         if (vertexLabel == null)
-            throw new NullPointerException();
+            throw new NullPointerException("removeVertex(vertexLabel): vertexLabel must not be null");
 
         Vertex<T, S> ris = vertices.remove(vertexLabel);
 
-        if (ris == null)
-            throw new GraphException("Vertex with the label: " + vertexLabel + " is not in the Graph");
+        if (ris != null) {
+            Set<T> verticesLabel = getVerticesLabel();
 
-        Set<T> all = this.getVerticesLabel();
-
-        for (T a : all) {
-            Vertex<T, S> curr = this.vertices.get(a);
-            if (curr.hasAdjacent(vertexLabel)) {
-                curr.removeEdge(vertexLabel);
+            for (T vLabel : verticesLabel) {
+                Vertex<T, S> curr = this.vertices.get(vLabel);
+                if (curr.hasAdjacent(vertexLabel)) {
+                    curr.removeEdge(vertexLabel);
+                }
             }
         }
 
@@ -201,15 +212,13 @@ public class Graph<T, S> {
      * @param vertexLabel vertex whose adjacents label you want to know
      * @return a {@link Set} of adjacents label of the given {@code vertexLabel}
      * @throws NullPointerException iff {@code vertexLabel} is {@code null}
-     * @throws GraphException       iff {@code vertexLabel} is not in the
-     *                              {@code Graph}
      */
     public Set<T> getAdjacentVerticesLabel(T vertexLabel) throws NullPointerException, GraphException {
         if (vertexLabel == null)
-            throw new NullPointerException();
+            throw new NullPointerException("getAdjacentVerticesLabel(vertexLabel): vertexLabel must not be null");
 
         if (!vertices.containsKey(vertexLabel))
-            throw new GraphException("Vertex with the label: " + vertexLabel + " is not in the Graph");
+            return null;
 
         Vertex<T, S> vertex = vertices.get(vertexLabel);
 
@@ -221,56 +230,21 @@ public class Graph<T, S> {
      * @return a new {@link Set} of {@link Vertex} adjacents with the {@code vertex}
      *         with the given label
      * @throws NullPointerException iff {@code vertexLabel} is {@code null}
-     * @throws GraphException       iff {@code vertexLabel} is not in the
-     *                              {@code Graph}
      */
     public Set<Vertex<T, S>> getAdjacentVertices(T vertexLabel) throws NullPointerException, GraphException {
         if (vertexLabel == null)
-            throw new NullPointerException();
+            throw new NullPointerException("getAdjacentVertices(vertexLabel): vertexLabel must not be null");
 
         if (!vertices.containsKey(vertexLabel))
-            throw new GraphException("Vertex: " + vertexLabel + " is not in the Graph");
+            return null;
 
-        Set<T> adj = getAdjacentVerticesLabel(vertexLabel);
+        Set<T> adjVerticesLabel = getAdjacentVerticesLabel(vertexLabel);
 
-        Set<Vertex<T, S>> ris = new HashSet<>();
-        for (T a : adj) {
-            ris.add(getVertex(a));
+        Set<Vertex<T, S>> adjVertices = new HashSet<>();
+        for (T adjLabel : adjVerticesLabel) {
+            adjVertices.add(getVertex(adjLabel));
         }
-        return ris;
-    }
-
-    /**
-     * Return the total degree of the given {@code vertexLabel}
-     * 
-     * @param vertexLabel
-     * @return the total degree on success, -1 otherwise
-     * @throws NullPointerException iff {@code vertexLabel} is {@code null}
-     */
-    public int getVertexDegree(T vertexLabel) throws NullPointerException {
-        if (vertexLabel == null)
-            throw new NullPointerException();
-
-        Vertex<T, S> vertex = this.vertices.get(vertexLabel);
-
-        if (vertex == null)
-            return -1;
-
-        int outdegree = vertex.getOutDegree();
-
-        if (!isDirected())
-            return outdegree;
-
-        int indegree = 0;
-
-        Enumeration<Vertex<T, S>> enumerationVertices = vertices.elements();
-        while (enumerationVertices.hasMoreElements()) {
-            vertex = enumerationVertices.nextElement();
-            if (vertex.hasAdjacent(vertexLabel))
-                indegree++;
-        }
-
-        return (outdegree + indegree);
+        return adjVertices;
     }
 
     /**
@@ -280,12 +254,15 @@ public class Graph<T, S> {
      * @param vertexTo
      * @return {@code TRUE} iff the two vertices are adjacents, {@code FALSE}
      *         otherwise
-     * @throws NullPointerException iff {@code vertexA} OR {@code vertexB} are
+     * @throws NullPointerException iff {@code vertexFrom} OR {@code vertexTo} are
      *                              {@code null}
      */
     public boolean areAdjacents(T vertexFrom, T vertexTo) throws NullPointerException {
-        if (vertexFrom == null || vertexTo == null)
-            throw new NullPointerException();
+        if (vertexFrom == null)
+            throw new NullPointerException("areAdjacents(vertexFrom, vertexTo): vertexFrom must not be null");
+
+        if (vertexTo == null)
+            throw new NullPointerException("areAdjacents(vertexFrom, vertexTo): vertexTo must not be null");
 
         Vertex<T, S> firstVertex = vertices.get(vertexFrom);
 
@@ -303,13 +280,14 @@ public class Graph<T, S> {
      * 
      * @param vertexA
      * @param vertexB
-     * @return {@code TRUE} iff the two vertices are adjacents, {@code FALSE}
+     * @return {@code TRUE} iff the two vertices are complete adjacents,
+     *         {@code FALSE}
      *         otherwise
      * @throws NullPointerException iff {@code vertexA} OR {@code vertexB} are
      *                              {@code null}
      */
     public boolean areCompleteAdjacents(T vertexA, T vertexB) {
-        return this.areAdjacents(vertexA, vertexB) && this.areAdjacents(vertexB, vertexA);
+        return areAdjacents(vertexA, vertexB) && areAdjacents(vertexB, vertexA);
     }
 
     /**
@@ -321,8 +299,11 @@ public class Graph<T, S> {
      *                              {@code null}
      */
     public Edge<S> getEdge(T vertexFrom, T vertexTo) throws NullPointerException {
-        if (vertexFrom == null || vertexTo == null)
-            throw new NullPointerException();
+        if (vertexFrom == null)
+            throw new NullPointerException("getEdge(vertexFrom, vertexTo): vertexFrom must not be null");
+
+        if (vertexTo == null)
+            throw new NullPointerException("getEdge(vertexFrom, vertexTo): vertexTo must not be null");
 
         Vertex<T, S> vertex = vertices.get(vertexFrom);
 
@@ -335,41 +316,38 @@ public class Graph<T, S> {
      * @param edgeLabel
      * @throws NullPointerException iff {@code vertexFrom} OR {@code vertexTo} OR
      *                              {@code edgeLabel} are {@code null}
-     * @throws GraphException
-     *                              <ul>
-     *                              <li>if {@code vertexFrom} OR {@code vertexTo}
-     *                              are not in the {@code Graph}</li>
-     *                              <li>if there is already an {@code edge} between
-     *                              the two vertices</li>
-     *                              </ul>
+     * @throws GraphException       if {@code vertexFrom} OR {@code vertexTo}
+     *                              are not in the {@code Graph}
      */
     public void addEdge(T vertexFrom, T vertexTo, S edgeLabel) throws NullPointerException, GraphException {
-        if (vertexFrom == null || vertexTo == null || edgeLabel == null)
-            throw new NullPointerException();
+        if (vertexFrom == null)
+            throw new NullPointerException("addEdge(vertexFrom, vertexTo, edgeLabel): vertexFrom must not be null");
+
+        if (vertexTo == null)
+            throw new NullPointerException("addEdge(vertexFrom, vertexTo, edgeLabel): vertexTo must not be null");
+
+        if (edgeLabel == null)
+            throw new NullPointerException("addEdge(vertexFrom, vertexTo, edgeLabel): edgeLabel must not be null");
 
         if (!vertices.containsKey(vertexFrom))
             throw new GraphException("There is no vertexFrom:" + vertexFrom + " in the Graph");
+
         if (!vertices.containsKey(vertexTo))
             throw new GraphException("There is no vertexTo" + vertexTo + " in the Graph");
 
         Vertex<T, S> firstVertex = vertices.get(vertexFrom);
 
-        if (!firstVertex.addAdjacent(vertexTo, edgeLabel))
-            throw new GraphException("There is already an edgeLabel: " + edgeLabel + " between vertexFrom:" + vertexFrom
-                    + " and vertexTo:" + vertexTo + " in the Graph");
+        firstVertex.addAdjacent(vertexTo, edgeLabel);
 
         if (!isDirected()) {
             Vertex<T, S> secondVertex = vertices.get(vertexTo);
-
-            if (!secondVertex.addAdjacent(vertexFrom, edgeLabel))
-                throw new GraphException("There is already an edgeLabel: " + edgeLabel + " between vertexTo:" + vertexTo
-                        + " and vertexFrom:" + vertexFrom + " in the Graph");
+            secondVertex.addAdjacent(vertexFrom, edgeLabel);
         }
     }
 
     /**
-     * @param vertexFrom
-     * @param vertexTo
+     * @param vertexA
+     * @param vertexB
      * @return the {@code Edge} removed
      * @throws NullPointerException iff {@code vertexA} OR {@code vertexB} are
      *                              {@code null}
@@ -381,33 +359,37 @@ public class Graph<T, S> {
      *                              the two vertices</li>
      *                              </ul>
      */
-    public Edge<S> removeEdge(T vertexFrom, T vertexTo) throws NullPointerException, GraphException {
-        if (vertexFrom == null || vertexTo == null)
-            throw new NullPointerException();
+    public Edge<S> removeEdge(T vertexA, T vertexB) throws NullPointerException, GraphException {
+        if (vertexA == null)
+            throw new NullPointerException("removeEdge(vertexA, vertexB): vertexA must not be null");
 
-        if (!vertices.containsKey(vertexFrom))
-            throw new GraphException("There is no vertexA:" + vertexFrom + " in the Graph");
-        if (!vertices.containsKey(vertexTo))
-            throw new GraphException("There is no vertexB:" + vertexTo + " in the Graph");
+        if (vertexB == null)
+            throw new NullPointerException("removeEdge(vertexA, vertexB): vertexB must not be null");
 
-        Vertex<T, S> firstVertex = vertices.get(vertexFrom);
+        if (!vertices.containsKey(vertexA))
+            throw new GraphException("There is no vertexA:" + vertexA + " in the Graph");
 
-        Edge<S> ris = firstVertex.removeEdge(vertexTo);
+        if (!vertices.containsKey(vertexB))
+            throw new GraphException("There is no vertexB:" + vertexB + " in the Graph");
 
-        if (ris == null)
+        Vertex<T, S> firstVertex = vertices.get(vertexA);
+
+        Edge<S> edgeRemoved = firstVertex.removeEdge(vertexB);
+
+        if (edgeRemoved == null)
             throw new GraphException(
-                    "There is no edge between vertexA:" + vertexFrom + " and vertexB:" + vertexTo + " in the Graph");
+                    "There is no edge between vertexA:" + vertexA + " and vertexB:" + vertexB + " in the Graph");
 
         if (!isDirected()) {
-            Vertex<T, S> secondVertex = vertices.get(vertexTo);
+            Vertex<T, S> secondVertex = vertices.get(vertexB);
 
-            if (secondVertex.removeEdge(vertexFrom) == null)
+            if (secondVertex.removeEdge(vertexA) == null)
                 throw new GraphException(
-                        "There is no edge between vertexB:" + vertexTo + " and vertexA:" + vertexFrom
+                        "There is no edge between vertexB:" + vertexB + " and vertexA:" + vertexA
                                 + " in the Graph");
         }
 
-        return ris;
+        return edgeRemoved;
     }
 
     @Override

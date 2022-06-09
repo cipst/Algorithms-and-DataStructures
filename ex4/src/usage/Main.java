@@ -26,6 +26,8 @@ public class Main {
         System.out.println("\nLoading data from file...");
 
         Path inputFilePath = Paths.get(filepath);
+
+        /* ADD ALL VERTICES */
         try (BufferedReader fileInputReader = Files.newBufferedReader(inputFilePath, ENCODING)) {
             String line = null;
             while ((line = fileInputReader.readLine()) != null) {
@@ -35,6 +37,8 @@ public class Main {
                 graph.addVertex(lineElements[1]);
             }
         }
+
+        /* ADD ALL EDGES + WEIGHTS */
         try (BufferedReader fileInputReader = Files.newBufferedReader(inputFilePath,
                 ENCODING)) {
             String line = null;
@@ -65,33 +69,44 @@ public class Main {
         try {
             loadGraph(args[0], graph);
 
-            Set<Vertex<String, String>> ris = Dijkstra.dijkstra(graph, "torino");
+            String srcLabel = "torino";
+            String dstLabel = "catania";
+
+            long nanoTime1 = System.nanoTime();
+            Set<Vertex<String, String>> ris = Dijkstra.dijkstra(graph, srcLabel);
+            long nanoTime2 = System.nanoTime();
+
+            long runTimeInNanoSeconds = (nanoTime2 - nanoTime1);
+            System.out
+                    .format("Time taken by Dijkstra: %.2f milliseconds\n\n", (double) (runTimeInNanoSeconds) / 1000000);
 
             // printDijkstraResult(ris);
 
-            System.out.println("\nDistance between torino and catania: " +
-                    (findDistance(ris, "catania") / 1000) + " Km");
+            findDistance(ris, srcLabel, dstLabel);
         } catch (Exception e) {
-            e.printStackTrace(System.out);
+            e.printStackTrace(System.err);
         }
     }
 
-    private static double findDistance(Set<Vertex<String, String>> ris, String label) {
+    private static void findDistance(Set<Vertex<String, String>> ris, String srcLabel, String dstLabel) {
         Iterator<Vertex<String, String>> i = ris.iterator();
         while (i.hasNext()) {
             Vertex<String, String> v = i.next();
 
-            if (v.getLabel().equals(label))
-                return v.getDistance();
+            if (v.getLabel().equals(dstLabel)) {
+                System.out.format("Distance between %s and %s : ~%.2f Km\n\n", srcLabel, dstLabel,
+                        (v.getDistance() / 1000));
+                return;
+            }
         }
-        return 0;
+
+        System.out.format("Distance between %s and %s : %f Km\n\n", srcLabel, dstLabel, Double.POSITIVE_INFINITY);
     }
 
     private static void printDijkstraResult(Set<Vertex<String, String>> ris) {
         System.out.println("DIJKSTRA RESULT: ");
         for (Vertex<String, String> v : ris) {
-            System.out.print(v.getLabel() + ": " + v.getDistance());
-            System.out.println();
+            System.out.println(v.getLabel() + ": " + v.getDistance());
         }
     }
 
@@ -99,8 +114,6 @@ public class Main {
         if (v != null) {
             printPath(v.getPi());
             System.out.print(v + " ");
-        } else {
-            // System.out.print(v);
         }
     }
 }

@@ -14,61 +14,57 @@ import minimumheap.MinimumHeapException;
 
 public class Dijkstra {
 
-    private static <T, S> void initSingleSource(Graph<T, S> G, Vertex<T, S> src) {
-        for (Vertex<T, S> v : G.getVertices()) {
-            v.setDistance(Double.POSITIVE_INFINITY);
-            v.setPi(null);
-        }
-        src.setDistance(0);
-    }
-
-    private static <T, S> void relax(Vertex<T, S> u, Vertex<T, S> v) {
-        double w = u.getEdgeWeight(v.getLabel());
-
-        if (v.getDistance() > (u.getDistance() + w)) {
-            v.setDistance(u.getDistance() + w);
-            v.setPi(u);
-        }
-    }
-
     public static <T, S> Set<Vertex<T, S>> dijkstra(Graph<T, S> graph, T srcLabel)
             throws MinimumHeapException, GraphException, Exception {
         GenericComparator<T, S> comparator = new GenericComparator<>();
 
-        Vertex<T, S> src = graph.getVertex(srcLabel);
-
-        src.setDistance(0);
-
         MinimumHeap<Vertex<T, S>> Q = new MinimumHeap<>(comparator);
-        Set<Vertex<T, S>> ris = new HashSet<>();
+        Set<Vertex<T, S>> visited = new HashSet<>(); // new Set containing all the vertices already visited
 
-        for (Vertex<T, S> v : graph.getVertices()) {
+        Vertex<T, S> src = graph.getVertex(srcLabel); // retrieve the Vertex
+
+        init(graph, src, Q);
+
+        visited.add(src); // add the source to the set of visited
+
+        while (Q.size() != 0) {
+            Vertex<T, S> u = Q.remove(); // extract the Vertex with min distance --> u
+
+            visited.add(u); // add the Vertex (u) extracted into the set of visited
+
+            for (Vertex<T, S> v : graph.getAdjacentVertices(u.getLabel())) { // foreach vertex v which is adjacent of u
+                relax(u, v, Q);
+            }
+        }
+
+        return visited;
+    }
+
+    private static <T, S> void relax(Vertex<T, S> u, Vertex<T, S> v, MinimumHeap<Vertex<T, S>> Q)
+            throws MinimumHeapException {
+        Double alt = u.getDistance() + u.getEdgeWeight(v.getLabel());
+
+        if (v.getDistance() > alt && u.getDistance() != Double.POSITIVE_INFINITY) {
+            Vertex<T, S> tmp = v; // save the vertex v into tmp
+
+            v.setDistance(alt);
+            v.setPi(u);
+
+            Q.decrease(tmp, v); // decrease the MinimumHeap, change the old v (tmp) with the new v
+        }
+    }
+
+    private static <T, S> void init(Graph<T, S> graph, Vertex<T, S> src, MinimumHeap<Vertex<T, S>> Q)
+            throws MinimumHeapException {
+        for (Vertex<T, S> v : graph.getVertices()) { // foreach vertex v in the graph
             if (!v.equals(src)) {
                 v.setDistance(Double.POSITIVE_INFINITY);
                 v.setPi(null);
             }
-            Q.add(v);
+            Q.add(v); // add the vertex to the MinimumHeap
         }
-
-        ris.add(src);
-
-        while (Q.size() != 0) {
-            Vertex<T, S> u = Q.remove();
-            ris.add(u);
-            for (Vertex<T, S> v : graph.getAdjacentVertices(u.getLabel())) {
-                Vertex<T, S> tmp = v;
-                Double alt = u.getDistance() + graph.getEdge(u.getLabel(), v.getLabel()).getWeight();
-                if (alt < v.getDistance() && u.getDistance() != Double.POSITIVE_INFINITY) {
-                    v.setDistance(alt);
-                    v.setPi(u);
-                    Q.decrease(tmp, v);
-                }
-            }
-        }
-
-        return ris;
+        src.setDistance(0); // set the distance of the source (from the source) to 0
     }
-
 }
 
 class GenericComparator<T, S> implements Comparator<Vertex<T, S>> {

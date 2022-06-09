@@ -19,29 +19,40 @@ public class Vertex<T, S> {
         this.label = label;
     }
 
+    /**
+     * @return the {@code label} of the {@code vertex}
+     */
     public T getLabel() {
         return this.label;
     }
 
+    /**
+     * Set the {@code distance} from the {@code parent} vertex
+     * 
+     * @param distance
+     */
     public void setDistance(double distance) {
         this.distance = distance;
     }
 
+    /**
+     * @return the {@code distance} from the {@code parent} vertex
+     */
     public double getDistance() {
         return this.distance;
     }
 
     /**
-     * Set the parent {@code Vertex}
+     * Set the {@code parent} {@code Vertex}
      * 
-     * @param pi parent {@code Vertex}
+     * @param pi {@code parent} {@code Vertex}
      */
     public void setPi(Vertex<T, S> pi) {
         this.pi = pi;
     }
 
     /**
-     * @return the parent {@code Vertex}
+     * @return the {@code parent} {@code Vertex}
      */
     public Vertex<T, S> getPi() {
         return pi;
@@ -93,7 +104,7 @@ public class Vertex<T, S> {
      */
     public boolean hasAdjacent(T vertexLabel) throws NullPointerException {
         if (vertexLabel == null)
-            throw new NullPointerException();
+            throw new NullPointerException("hasAdjacent(vertexLabel): vertexLabel must not be null");
 
         return adjacentList.containsKey(vertexLabel);
     }
@@ -106,7 +117,7 @@ public class Vertex<T, S> {
      */
     public boolean hasEdge(Edge<S> edge) throws NullPointerException {
         if (edge == null)
-            throw new NullPointerException();
+            throw new NullPointerException("hasEdge(edge): edge must not be null");
 
         return adjacentList.contains(edge);
     }
@@ -119,8 +130,11 @@ public class Vertex<T, S> {
      *                              are {@code null}
      */
     public boolean addAdjacent(T adjacentLabel, S edgeLabel) throws NullPointerException {
-        if (adjacentLabel == null || edgeLabel == null)
-            throw new NullPointerException();
+        if (adjacentLabel == null)
+            throw new NullPointerException("addAdjacent(adjacentLabel, edgeLabel): adjacentLabel must not be null");
+
+        if (edgeLabel == null)
+            throw new NullPointerException("addAdjacent(adjacentLabel, edgeLabel): edgeLabel must not be null");
 
         Edge<S> edge = new Edge<>(edgeLabel);
 
@@ -135,7 +149,7 @@ public class Vertex<T, S> {
      */
     public Edge<S> getEdge(T adjacentLabel) throws NullPointerException {
         if (adjacentLabel == null)
-            throw new NullPointerException();
+            throw new NullPointerException("getEdge(adjacentLabel): adjacentLabel must not be null");
 
         return adjacentList.get(adjacentLabel);
     }
@@ -158,21 +172,22 @@ public class Vertex<T, S> {
         Edge<S> edge = getEdge(adjacentLabel);
 
         if (edge == null)
-            throw new NullPointerException();
+            throw new NullPointerException("getEdgeWeight(adjacentLabel): the edge between " + this.label + " and "
+                    + adjacentLabel + " does not exists");
 
         return edge.getWeight();
     }
 
     /**
-     * @param adjacent the adjacent to remove
+     * @param adjacentLabel the adjacent to remove
      * @return the edge of the adjacent removed on success, {@code null} otherwise
-     * @throws NullPointerException iff {@code adjacent} is {@code null}
+     * @throws NullPointerException iff {@code adjacentLabel} is {@code null}
      */
-    public Edge<S> removeEdge(T adjacent) throws NullPointerException {
-        if (adjacent == null)
-            throw new NullPointerException();
+    public Edge<S> removeEdge(T adjacentLabel) throws NullPointerException {
+        if (adjacentLabel == null)
+            throw new NullPointerException("remove(adjacentLabel): adjacentLabel must not be null");
 
-        return adjacentList.remove(adjacent);
+        return adjacentList.remove(adjacentLabel);
     }
 
     /**
