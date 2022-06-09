@@ -52,11 +52,12 @@ SkipList* createSkipList(int (*compare)(void*, void*)) {
     return l;
 }
 
-void insertSkpiList(SkipList* list, void* item) {
+int insertSkpiList(SkipList* list, void* item) {
     Node* n;
     if ((n = createNode(item, randomLevel())) == NULL) {
-        fprintf(stderr, "insertSkipList(): skiplist createNode error\n");
-        exit(EXIT_FAILURE);
+        // fprintf(stderr, "insertSkipList(): skiplist createNode error\n");
+        // exit(EXIT_FAILURE);
+        return -1;
     }
     if (n->size > list->max_level)
         list->max_level = n->size;
@@ -73,45 +74,11 @@ void insertSkpiList(SkipList* list, void* item) {
             k++;
         }
     }
+    return 1;
 }
 
 int searchSkipList(SkipList* list, void* item) {
     Node* x = list->head;
-
-    // int level = list->max_level - 1;
-    // Find the position where the item is expected
-    // while (x != NULL && level >= 0) {
-    //     if (x->next[level] == NULL) {
-    //         --level;
-    //     } else {
-    //         int cmp = list->compare(x->next[level]->item, item);
-
-    //         if (cmp == 0) {  // Found a match
-    //             return 1;
-    //         } else if (cmp > 0) {  // Drop down a level
-    //             --level;
-    //         } else {  // Keep going at this level
-    //             x = x->next[level];
-    //         }
-    //     }
-    // }
-    // // Didn't find it
-    // return -1;
-
-    //-------------
-
-    // for (int i = list->max_level - 1; i >= 0; i--) {
-    //     while (list->compare(x->next[i]->item, item) < 0)
-    //         x = x->next[i];
-    // }
-    // if (list->compare(x->next[1]->item, item) == 0) {
-    //     return 1;
-    // } else {
-    //     return -1;
-    // }
-    // return -1;
-
-    //-------------
 
     // loop invariant: x->item < I
     for (int i = list->max_level - 1; i >= 0; --i) {
@@ -128,25 +95,27 @@ int searchSkipList(SkipList* list, void* item) {
         return -1;
 }
 
-void freeNode(Node* n) {
-    free(n->item);
+void freeNode(Node* n, void (*custom_free)(void*)) {
+    if (custom_free != NULL)
+        custom_free(n->item);
+
     n->item = NULL;
     free(n->next);
     free(n);
     n = NULL;
 }
 
-void freeSkipList(SkipList* l) {
+void freeSkipList(SkipList* l, void (*custom_free)(void*)) {
     Node* current = l->head;
     Node* next = NULL;
 
-    printf("\nDeleting SkipList ...\n");
+    // printf("\nDeleting SkipList ...\n");
 
     while (current) {
         next = current->next[0];
-        freeNode(current);
+        freeNode(current, custom_free);
         current = next;
     }
 
-    printf("\nSkipList Deleted!\n");
+    // printf("\nSkipList Deleted!\n");
 }

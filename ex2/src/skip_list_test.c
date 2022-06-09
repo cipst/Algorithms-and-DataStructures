@@ -32,19 +32,32 @@ void setUp(void) {
     skip_list_int = createSkipList(compare);
 }
 
-// Function called on test to clear the environment
-void tearDown(void) {
-    freeSkipList(skip_list_int);
+static void test_skip_list_insert_one(void) {
+    TEST_ASSERT_EQUAL_INT(1, insertSkpiList(skip_list_int, &i1));
 }
 
-static void test_skip_list_insert_one(void) {
+static void test_skip_list_insert_two(void) {
+    int ris = insertSkpiList(skip_list_int, &i1);
+    ris += insertSkpiList(skip_list_int, &i2);
+    TEST_ASSERT_EQUAL_INT(2, ris);
+}
+
+static void test_skip_list_search_one(void) {
     insertSkpiList(skip_list_int, &i1);
+    TEST_ASSERT_EQUAL_INT(1, searchSkipList(skip_list_int, &i1));
+}
+
+// Function called on test to clear the environment
+void tearDown(void) {
+    freeSkipList(skip_list_int, NULL);
 }
 
 int main(void) {
     UNITY_BEGIN();
 
     RUN_TEST(test_skip_list_insert_one);
+    RUN_TEST(test_skip_list_insert_two);
+    RUN_TEST(test_skip_list_search_one);
 
     return UNITY_END();
 }

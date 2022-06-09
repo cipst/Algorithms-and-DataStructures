@@ -9,8 +9,8 @@ NC=\e[0m
 
 CC = gcc
 
-# all: tests ex2
-all: ex2
+all: tests ex2
+# all: ex2
 
 help:
 	@echo "$(BOLD)~~~ $(CYAN)HELP$(NC)$(BOLD) ~~~$(NC)"

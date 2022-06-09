@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define MAX_HEIGHT 5
+#define MAX_HEIGHT 20
 
 typedef struct _SkipList SkipList;
 typedef struct _Node Node;
@@ -52,8 +52,9 @@ SkipList *createSkipList(int (*compare)(void *, void *));
 /**
  *  @param list pointer to the SkipList
  *  @param item pointer to the item to insert into the SkipList
+ *  @return 1 on success, -1 otherwise
  * */
-void insertSkpiList(SkipList *list, void *item);
+int insertSkpiList(SkipList *list, void *item);
 
 /**
  *  @param list pointer to the SkipList
@@ -61,8 +62,8 @@ void insertSkpiList(SkipList *list, void *item);
  * */
 int searchSkipList(SkipList *list, void *item);
 
-void freeNode(Node *n);
+void freeNode(Node *n, void (*custom_free)(void *));
 
-void freeSkipList(SkipList *l);
+void freeSkipList(SkipList *l, void (*custom_free)(void *));
 
 #endif /* _SKIP_LIST_H_asoiwnfiualqi */

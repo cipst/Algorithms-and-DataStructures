@@ -43,7 +43,7 @@ void load_dictionary(SkipList* list, const char* file_name) {
     printf("\nLoading Dictionary...\n");
 
     clock_t t = clock();
-    // int count = 0;
+    
     while (fgets(buffer, buf_size, fp) != NULL) {
         string = malloc((strlen(buffer)) * sizeof(char));
         if (string == NULL) {
@@ -51,9 +51,11 @@ void load_dictionary(SkipList* list, const char* file_name) {
             exit(EXIT_FAILURE);
         }
         strncpy(string, buffer, strlen(buffer) - 1);
-        // printf("%s", string);
-        insertSkpiList(list, string);
-        // count++;
+        // printf("%s\n", string);
+
+        if (insertSkpiList(list, string) == -1)
+            fprintf(stderr, "insertSkipList(): skiplist createNode error\n");
+
     }
     t = clock() - t;
 
@@ -113,7 +115,7 @@ void test_SkipList(const char* path1, const char* path2) {
 
     check_correctme(list, path2);
 
-    freeSkipList(list);
+    freeSkipList(list, free);
 }
 
 int main(int argc, char** argv) {
