@@ -307,6 +307,9 @@ public class Graph<T, S> {
 
         Vertex<T, S> vertex = vertices.get(vertexFrom);
 
+        if (vertex == null)
+            return null;
+
         return vertex.getEdge(vertexTo);
     }
 

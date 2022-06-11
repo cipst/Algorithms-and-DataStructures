@@ -23,7 +23,7 @@ public class Main {
 
     private static void loadGraph(String filepath, Graph<String, String> graph)
             throws IOException, GraphException {
-        System.out.println("\nLoading data from file...");
+        System.out.format("\n%sLoading data from file...%s\n", ConsoleColors.YELLOW, ConsoleColors.RESET);
 
         Path inputFilePath = Paths.get(filepath);
 
@@ -61,7 +61,7 @@ public class Main {
                 }
             }
         }
-        System.out.println("Data loaded\n");
+        System.out.format("%sData loaded%s\n\n", ConsoleColors.YELLOW, ConsoleColors.RESET);
     }
 
     public static void main(String[] args) {
@@ -78,9 +78,9 @@ public class Main {
 
             long runTimeInNanoSeconds = (nanoTime2 - nanoTime1);
             System.out
-                    .format("Time taken by Dijkstra: %.2f milliseconds\n\n", (double) (runTimeInNanoSeconds) / 1000000);
-
-            // printDijkstraResult(ris);
+                    .format("%sTime taken by Dijkstra:%s %.2f milliseconds%s\n\n", ConsoleColors.CYAN,
+                            ConsoleColors.GREEN_BOLD_BRIGHT, (double) (runTimeInNanoSeconds) / 1000000,
+                            ConsoleColors.RESET);
 
             findDistance(ris, srcLabel, dstLabel);
         } catch (Exception e) {
@@ -88,32 +88,59 @@ public class Main {
         }
     }
 
+    /**
+     * From the given {@code Set} of vertices print the path and the distance from
+     * {@code srcLabel} to {@code dstLabel}
+     * 
+     * @param ris      {@code Set} of vertices resulting from the call to Dijkstra
+     * @param srcLabel
+     * @param dstLabel
+     */
     private static void findDistance(Set<Vertex<String, String>> ris, String srcLabel, String dstLabel) {
         Iterator<Vertex<String, String>> i = ris.iterator();
         while (i.hasNext()) {
             Vertex<String, String> v = i.next();
 
             if (v.getLabel().equals(dstLabel)) {
-                System.out.format("Distance between %s and %s : ~%.2f Km\n\n", srcLabel, dstLabel,
-                        (v.getDistance() / 1000));
+                System.out.format("%sCities crossed:%s\n", ConsoleColors.CYAN, ConsoleColors.RESET);
+                int cities = path(v);
+                System.out.format("%sNumber of cities crossed:%s %d%s\n", ConsoleColors.CYAN,
+                        ConsoleColors.GREEN_BOLD_BRIGHT,
+                        cities, ConsoleColors.RESET);
+
+                System.out.format("%sDistance between %s%s%s and %s%s%s :%s ~%.2f Km%s\n\n", ConsoleColors.CYAN,
+                        ConsoleColors.PURPLE_BACKGROUND_BRIGHT, srcLabel, ConsoleColors.CYAN,
+                        ConsoleColors.PURPLE_BACKGROUND_BRIGHT, dstLabel, ConsoleColors.CYAN,
+                        ConsoleColors.GREEN_BOLD_BRIGHT, (v.getDistance() / 1000), ConsoleColors.RESET);
+
                 return;
             }
         }
 
-        System.out.format("Distance between %s and %s : %f Km\n\n", srcLabel, dstLabel, Double.POSITIVE_INFINITY);
+        System.out.format("%sDistance between %s and %s :%s %f%s\n\n", ConsoleColors.CYAN, srcLabel, dstLabel,
+                ConsoleColors.RED_BOLD, Double.POSITIVE_INFINITY, ConsoleColors.RESET);
     }
 
-    private static void printDijkstraResult(Set<Vertex<String, String>> ris) {
-        System.out.println("DIJKSTRA RESULT: ");
-        for (Vertex<String, String> v : ris) {
-            System.out.println(v.getLabel() + ": " + v.getDistance());
+    /**
+     * Print the path from the destination {@code Vertex} up to the source
+     * 
+     * @param v {@code Vertex} destination
+     * @return the number of cities crossed
+     */
+    private static int path_aux(Vertex<String, String> v) {
+        if (v.getPi() == null) {
+            System.out.format("\t%s%s%s\n", ConsoleColors.PURPLE_BACKGROUND_BRIGHT, v.getLabel(), ConsoleColors.RESET);
+            return 1;
         }
+
+        int c = path_aux(v.getPi());
+        System.out.println("\t" + v.getLabel());
+        return c + 1;
     }
 
-    private static void printPath(Vertex<String, String> v) {
-        if (v != null) {
-            printPath(v.getPi());
-            System.out.print(v + " ");
-        }
+    private static int path(Vertex<String, String> v) {
+        int c = path_aux(v.getPi());
+        System.out.format("\t%s%s%s\n", ConsoleColors.PURPLE_BACKGROUND_BRIGHT, v.getLabel(), ConsoleColors.RESET);
+        return c + 1;
     }
 }

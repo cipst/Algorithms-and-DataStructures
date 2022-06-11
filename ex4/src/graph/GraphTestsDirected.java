@@ -28,24 +28,24 @@ public class GraphTestsDirected {
     }
 
     @Test
-    public void testAddOneVertex() {
+    public void testAddOneVertex() throws NullPointerException {
         assertTrue(graph.addVertex(lb1));
     }
 
     @Test(expected = NullPointerException.class)
-    public void testAddNullVertex() {
+    public void testAddNullVertex() throws NullPointerException {
         graph.addVertex(null);
     }
 
     @Test
-    public void testAddTwoVertex_True() {
+    public void testAddTwoVertex_True() throws NullPointerException {
         boolean ris = graph.addVertex(lb1);
         ris = ris && graph.addVertex(lb2);
         assertTrue(ris);
     }
 
     @Test
-    public void testAddTwoVertex_False() {
+    public void testAddTwoVertex_False() throws NullPointerException {
         boolean ris = graph.addVertex(lb1);
         ris = ris && graph.addVertex(lb1);
         assertFalse(ris);
@@ -67,26 +67,26 @@ public class GraphTestsDirected {
     }
 
     @Test
-    public void testGetNumberVertices_OneVertex() {
+    public void testGetNumberVertices_OneVertex() throws NullPointerException {
         graph.addVertex(lb1);
         assertEquals(graph.getNumberVertices(), 1);
     }
 
     @Test
-    public void testGetNumberVertices_TwoVertices() {
+    public void testGetNumberVertices_TwoVertices() throws NullPointerException {
         graph.addVertex(lb1);
         graph.addVertex(lb2);
         assertEquals(graph.getNumberVertices(), 2);
     }
 
     @Test
-    public void testContains_True() {
+    public void testContains_True() throws NullPointerException {
         graph.addVertex(lb1);
         assertTrue(graph.containsVertex(lb1));
     }
 
     @Test
-    public void testContains_False() {
+    public void testContains_False() throws NullPointerException {
         assertFalse(graph.containsVertex(lb1));
     }
 
@@ -97,7 +97,7 @@ public class GraphTestsDirected {
     }
 
     @Test
-    public void testGetVerticesLabel_OneVertex() {
+    public void testGetVerticesLabel_OneVertex() throws NullPointerException {
         graph.addVertex(lb1);
         Set<Integer> exp = new HashSet<>();
         exp.add(lb1);
@@ -105,7 +105,7 @@ public class GraphTestsDirected {
     }
 
     @Test
-    public void testGetVertices_TwoVertices() {
+    public void testGetVertices_TwoVertices() throws NullPointerException {
         graph.addVertex(lb1);
         graph.addVertex(lb2);
         Set<Integer> exp = new HashSet<>();
@@ -115,35 +115,78 @@ public class GraphTestsDirected {
     }
 
     @Test(expected = NullPointerException.class)
-    public void testRemoveVertex_Null() {
+    public void testRemoveVertex_Null() throws NullPointerException {
         graph.removeVertex(null);
     }
 
-    @Test(expected = GraphException.class)
-    public void testRemoveVertex_NotInGraph() {
-        graph.removeVertex(lb1);
+    @Test
+    public void testRemoveVertex_NotInGraph() throws NullPointerException {
+        assertNull(graph.removeVertex(lb1));
     }
 
     @Test
-    public void testRemoveVertex_True() {
+    public void testRemoveVertex_True() throws NullPointerException {
         graph.addVertex(lb1);
-        assertThat(graph.removeVertex(lb1), is(new Vertex<>(lb1)));
+        assertThat(graph.removeVertex(lb1).getLabel(), is(lb1));
     }
 
     @Test(expected = NullPointerException.class)
-    public void testGetAdjacentVertices_Null() {
+    public void testGetAdjacentVertices_Null() throws NullPointerException, GraphException {
         graph.getAdjacentVertices(null);
     }
 
     @Test
-    public void testGetAdjacentVertices_Empty() {
+    public void testGetAdjacentVertices_Empty() throws NullPointerException, GraphException {
         assertNull(graph.getAdjacentVertices(lb1));
     }
 
-    @Test
-    public void testAddEdge_False() {
+    @Test(expected = GraphException.class)
+    public void testAddEdge_MissingVertex1() throws NullPointerException, GraphException {
+        graph.addVertex(lb2);
+        graph.addEdge(lb1, lb2, c1);
+    }
+
+    @Test(expected = GraphException.class)
+    public void testAddEdge_MissingVertex2() throws NullPointerException, GraphException {
         graph.addVertex(lb1);
-        assertFalse(graph.addEdge(lb1, lb2, c1));
+        graph.addEdge(lb1, lb2, c1);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testAddEdge_LabelNull() throws NullPointerException, GraphException {
+        graph.addVertex(lb1);
+        graph.addEdge(lb1, lb2, null);
+    }
+
+    @Test
+    public void testAddEdge_True() throws NullPointerException, GraphException {
+        graph.addVertex(lb1);
+        graph.addVertex(lb2);
+        graph.addEdge(lb1, lb2, 'A');
+    }
+
+    @Test
+    public void testGetEdge_MissingVertex1() throws NullPointerException, GraphException {
+        graph.addVertex(lb1);
+        graph.addVertex(lb2);
+        graph.addEdge(lb1, lb2, 'A');
+        assertNull(graph.getEdge(lb3, lb2));
+    }
+
+    @Test
+    public void testGetEdge_MissingVertex2() throws NullPointerException, GraphException {
+        graph.addVertex(lb1);
+        graph.addVertex(lb2);
+        graph.addEdge(lb1, lb2, 'A');
+        assertNull(graph.getEdge(lb1, lb3));
+    }
+
+    @Test
+    public void testGetEdge_True() throws NullPointerException, GraphException {
+        graph.addVertex(lb1);
+        graph.addVertex(lb2);
+        graph.addEdge(lb1, lb2, 'A');
+        assertThat(graph.getEdge(lb1, lb2).getLabel(), is('A'));
     }
 
     // @Test
